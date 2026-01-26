@@ -1,0 +1,32 @@
+# Dependencies
+/vendor/
+/node_modules/
+composer.lock
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs & Cache
+/storage/logs/*
+/storage/cache/*
+!/storage/logs/.gitkeep
+!/storage/cache/.gitkeep
+
+# Testing
+.phpunit.result.cache
+coverage/
+
+# Build
+/build/

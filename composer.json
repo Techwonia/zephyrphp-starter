@@ -1,0 +1,52 @@
+{
+    "name": "zephyrphp/starter",
+    "description": "ZephyrPHP Starter - A minimal starting point for ZephyrPHP applications",
+    "type": "project",
+    "license": "MIT",
+    "keywords": [
+        "zephyrphp",
+        "starter",
+        "framework",
+        "php",
+        "minimal",
+        "boilerplate"
+    ],
+    "authors": [
+        {
+            "name": "Techwonia",
+            "email": "opensource@techwonia.com",
+            "homepage": "https://techwonia.com"
+        }
+    ],
+    "homepage": "https://github.com/Techwonia/zephyrphp-starter",
+    "support": {
+        "issues": "https://github.com/Techwonia/zephyrphp-starter/issues",
+        "source": "https://github.com/Techwonia/zephyrphp-starter",
+        "docs": "https://zephyrphp.com/docs"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "require": {
+        "php": ">=8.2",
+        "zephyrphp/framework": "^0.1|^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "scripts": {
+        "post-create-project-cmd": [
+            "@php -r \"require 'vendor/autoload.php'; ZephyrPHP\\Console\\Installer::postCreateProject();\""
+        ],
+        "serve": "php craftsman serve",
+        "test": "phpunit"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

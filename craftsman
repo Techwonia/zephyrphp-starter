@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * ZephyrPHP Craftsman CLI
+ *
+ * Light as a breeze, fast as the wind.
+ */
+
+define('BASE_PATH', __DIR__);
+define('ZEPHYR_START', microtime(true));
+
+require __DIR__ . '/vendor/autoload.php';
+
+// Load environment variables
+$dotenv = Dotenv\Dotenv::createImmutable(BASE_PATH);
+$dotenv->safeLoad();
+
+use ZephyrPHP\Console\Craftsman;
+
+$app = new Craftsman();
+exit($app->run());
