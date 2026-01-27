@@ -31,12 +31,12 @@
     },
     "require": {
         "php": ">=8.2",
-        "zephyrphp/framework": "^0.1|^1.0"
+        "zephyrphp/framework": "dev-main"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
         "post-create-project-cmd": [
