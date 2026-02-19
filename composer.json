@@ -40,7 +40,7 @@
     "prefer-stable": true,
     "scripts": {
         "post-create-project-cmd": [
-            "@php -r \"require 'vendor/autoload.php'; ZephyrPHP\\Console\\Installer::postCreateProject();\""
+            "ZephyrPHP\\Console\\Installer::postCreateProject"
         ],
         "serve": "php craftsman serve",
         "test": "phpunit"
