@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>{% block title %}{{ config('app.name', 'ZephyrPHP') }}{% endblock %}</title>
+
+    {# Load core app assets (defined in config/assets.php) #}
+    {{ load_assets('app') }}
+
+    {# Render all queued CSS files #}
+    {{ render_css() }}
+
+    {# Child templates can add extra CSS here #}
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    {# Main navigation #}
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">
+                <span class="brand-icon">⚡</span>
+                {{ config('app.name', 'ZephyrPHP') }}
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="https://zephyrphp.com/docs" class="nav-link" target="_blank">Docs</a></li>
+                <li><a href="https://github.com/Techwonia/zephyrphp" class="nav-link" target="_blank">GitHub</a></li>
+                {% block nav_items %}{% endblock %}
+            </ul>
+        </div>
+    </nav>
+
+    {# Main content area #}
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    {# Footer #}
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ "now"|date("Y") }} ZephyrPHP. Built with ⚡ and ❤️</p>
+        </div>
+    </footer>
+
+    {# Render all queued JavaScript files (already loaded by load_assets('app') above) #}
+    {{ render_js() }}
+
+    {# Child templates can add extra scripts here #}
+    {% block scripts %}{% endblock %}
+</body>
+</html>
