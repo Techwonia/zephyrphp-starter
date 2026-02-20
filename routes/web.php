@@ -7,8 +7,7 @@
  */
 
 use ZephyrPHP\Router\Route;
+use App\Controllers\HomeController;
 
 // Home page
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [HomeController::class, 'index']);
