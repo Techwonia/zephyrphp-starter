@@ -40,7 +40,15 @@
     "prefer-stable": true,
     "scripts": {
         "post-create-project-cmd": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@composer dump-autoload",
             "ZephyrPHP\\Console\\Installer::postCreateProject"
+        ],
+        "post-install-cmd": [
+            "@composer dump-autoload"
+        ],
+        "post-update-cmd": [
+            "@composer dump-autoload"
         ],
         "serve": "php craftsman serve",
         "test": "phpunit"
