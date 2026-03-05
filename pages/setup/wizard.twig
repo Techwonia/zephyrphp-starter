@@ -486,7 +486,7 @@
             </div>
             <div class="card-footer">
                 <div></div>
-                <button class="btn btn-primary" onclick="saveStep1()">
+                <button class="btn btn-primary" id="btn-step1-next">
                     Continue
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
@@ -503,7 +503,7 @@
                 <div id="alert-step2" class="alert"></div>
                 <div class="form-group">
                     <label for="db_driver">Database Driver</label>
-                    <select id="db_driver" onchange="toggleDbFields()">
+                    <select id="db_driver">
                         <option value="pdo_mysql" {{ (env.DB_CONNECTION ?? 'pdo_mysql') == 'pdo_mysql' ? 'selected' : '' }}>MySQL / MariaDB</option>
                         <option value="pdo_pgsql" {{ (env.DB_CONNECTION ?? '') == 'pdo_pgsql' ? 'selected' : '' }}>PostgreSQL</option>
                         <option value="pdo_sqlite" {{ (env.DB_CONNECTION ?? '') == 'pdo_sqlite' ? 'selected' : '' }}>SQLite</option>
@@ -544,21 +544,21 @@
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-outline btn-sm" onclick="testDb()">
+                    <button class="btn btn-outline btn-sm" id="btn-test-db">
                         <span class="test-db-text">Test Connection</span>
                         <span class="test-db-spinner spinner" style="display:none;"></span>
                     </button>
-                    <button class="btn btn-outline btn-sm" id="btn-create-db" onclick="createDb()" style="display:none;">
+                    <button class="btn btn-outline btn-sm" id="btn-create-db" style="display:none;">
                         Create Database
                     </button>
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-secondary" onclick="goToStep(1)">
+                <button class="btn btn-secondary" id="btn-step2-back">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                     Back
                 </button>
-                <button class="btn btn-primary" id="btn-step2-next" onclick="saveStep2()">
+                <button class="btn btn-primary" id="btn-step2-next">
                     Continue
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
@@ -612,11 +612,11 @@
                 </ul>
             </div>
             <div class="card-footer">
-                <button class="btn btn-secondary" onclick="goToStep(2)">
+                <button class="btn btn-secondary" id="btn-step3-back">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                     Back
                 </button>
-                <button class="btn btn-primary" id="btn-install" onclick="installTables()">
+                <button class="btn btn-primary" id="btn-install">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Install
                 </button>
@@ -651,11 +651,11 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-secondary" onclick="goToStep(3)">
+                <button class="btn btn-secondary" id="btn-step4-back">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                     Back
                 </button>
-                <button class="btn btn-primary" onclick="createAdmin()">
+                <button class="btn btn-primary" id="btn-create-admin">
                     Create Account
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
@@ -940,6 +940,18 @@
             showAlert(4, 'error', 'Network error. Please try again.');
         }
     }
+
+    // --- Bind event listeners (CSP-safe, no inline handlers) ---
+    document.getElementById('btn-step1-next').addEventListener('click', saveStep1);
+    document.getElementById('db_driver').addEventListener('change', toggleDbFields);
+    document.getElementById('btn-test-db').addEventListener('click', testDb);
+    document.getElementById('btn-create-db').addEventListener('click', createDb);
+    document.getElementById('btn-step2-back').addEventListener('click', function() { goToStep(1); });
+    document.getElementById('btn-step2-next').addEventListener('click', saveStep2);
+    document.getElementById('btn-step3-back').addEventListener('click', function() { goToStep(2); });
+    document.getElementById('btn-install').addEventListener('click', installTables);
+    document.getElementById('btn-step4-back').addEventListener('click', function() { goToStep(3); });
+    document.getElementById('btn-create-admin').addEventListener('click', createAdmin);
 
     // Initialize DB fields visibility
     toggleDbFields();
