@@ -1,0 +1,26 @@
+{% extends "@theme/layouts/base.twig" %}
+
+{% block content %}
+<div class="layout-sidebar">
+    <div class="layout-main">
+        {% block page_content %}{% endblock %}
+    </div>
+    <aside class="layout-aside">
+        {% block sidebar %}{% endblock %}
+    </aside>
+</div>
+
+<style>
+.layout-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+@media (max-width: 768px) {
+    .layout-sidebar {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

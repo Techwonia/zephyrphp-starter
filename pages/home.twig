@@ -1,23 +1,22 @@
 {% extends "layouts/base.twig" %}
 
-{% block title %}Welcome to ZephyrPHP{% endblock %}
+{% block title %}Welcome to {{ config('app.name', 'ZephyrPHP') }}{% endblock %}
 
 {% block content %}
 <div class="hero">
     <div class="container">
         <div class="hero-content">
             <h1 class="hero-title">
-                <span class="gradient-text">ZephyrPHP</span>
+                <span class="gradient-text">{{ config('app.name', 'ZephyrPHP') }}</span>
             </h1>
-            <p class="hero-subtitle">Light as a breeze, fast as the wind.</p>
-            <p class="version-badge">v0.2.3</p>
+            <p class="hero-subtitle">Your site is ready. Sign in to manage content.</p>
 
             <div class="cta-buttons">
-                <a href="https://zephyrphp.com/docs" class="btn btn-primary" target="_blank">
-                    Documentation
+                <a href="/login" class="btn btn-primary">
+                    Sign In
                 </a>
-                <a href="https://github.com/Techwonia/zephyrphp" class="btn btn-secondary" target="_blank">
-                    GitHub
+                <a href="/register" class="btn btn-secondary">
+                    Create Account
                 </a>
             </div>
         </div>

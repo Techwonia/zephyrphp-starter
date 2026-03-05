@@ -1,0 +1,156 @@
+{% extends "layouts/base.twig" %}
+
+{% block title %}Register — {{ config('app.name', 'ZephyrPHP') }}{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Create Account</h1>
+            <p>Get started with {{ config('app.name', 'ZephyrPHP') }}</p>
+        </div>
+
+        <form method="POST" action="/register" class="auth-form">
+            {{ csrf_field() | raw }}
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" class="form-control{% if flash('errors').name is defined %} is-invalid{% endif %}"
+                       value="{{ flash('_old_input').name ?? '' }}"
+                       placeholder="Your name" required autofocus>
+                {% if flash('errors').name is defined %}
+                    <div class="invalid-feedback">{{ flash('errors').name }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control{% if flash('errors').email is defined %} is-invalid{% endif %}"
+                       value="{{ flash('_old_input').email ?? '' }}"
+                       placeholder="you@example.com" required>
+                {% if flash('errors').email is defined %}
+                    <div class="invalid-feedback">{{ flash('errors').email }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control{% if flash('errors').password is defined %} is-invalid{% endif %}"
+                       placeholder="Min. 8 characters" required>
+                {% if flash('errors').password is defined %}
+                    <div class="invalid-feedback">{{ flash('errors').password }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="password_confirmation">Confirm Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" class="form-control{% if flash('errors').password_confirmation is defined %} is-invalid{% endif %}"
+                       placeholder="Repeat password" required>
+                {% if flash('errors').password_confirmation is defined %}
+                    <div class="invalid-feedback">{{ flash('errors').password_confirmation }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="/login">Sign in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style nonce="{{ csp_nonce() }}">
+    .auth-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--spacing-lg);
+    }
+
+    .auth-card {
+        background: var(--dark-bg-secondary);
+        border: 1px solid rgba(100, 255, 218, 0.1);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-2xl);
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .auth-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .auth-header p {
+        color: var(--text-secondary);
+    }
+
+    .auth-form .form-group {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .auth-form label {
+        display: block;
+        margin-bottom: var(--spacing-xs);
+        color: var(--text-secondary);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .auth-form .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: var(--dark-bg);
+        border: 1px solid rgba(100, 255, 218, 0.15);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: border-color var(--transition-base);
+    }
+
+    .auth-form .form-control:focus {
+        outline: none;
+        border-color: var(--accent-color);
+    }
+
+    .auth-form .form-control.is-invalid {
+        border-color: #ff4757;
+    }
+
+    .invalid-feedback {
+        color: #ff4757;
+        font-size: 0.85rem;
+        margin-top: 4px;
+    }
+
+    .btn-block {
+        width: 100%;
+        padding: 0.85rem;
+        font-size: 1rem;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: var(--spacing-lg);
+        color: var(--text-secondary);
+    }
+
+    .auth-footer a {
+        color: var(--accent-color);
+        text-decoration: none;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

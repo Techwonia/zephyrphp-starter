@@ -5,19 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>{% block title %}{{ config('app.name', 'ZephyrPHP') }}{% endblock %}</title>
+    <title>{% block title %}{{ seo.title ?? page.title ?? config('app.name', 'ZephyrPHP') }}{% endblock %}</title>
 
-    {# Load core app assets (defined in config/assets.php) #}
+    {% if seo.description is defined and seo.description %}
+    <meta name="description" content="{{ seo.description }}">
+    {% endif %}
+
+    {% if seo.image is defined and seo.image %}
+    <meta property="og:image" content="/{{ seo.image }}">
+    {% endif %}
+
     {{ load_assets('app') }}
-
-    {# Render all queued CSS files #}
     {{ render_css() }}
 
-    {# Child templates can add extra CSS here #}
     {% block styles %}{% endblock %}
 </head>
 <body>
-    {# Main navigation #}
     <nav class="navbar">
         <div class="container">
             <a href="/" class="navbar-brand">
@@ -38,34 +41,19 @@
         </div>
     </nav>
 
-    {# Flash messages #}
-    {% if flash('success') %}
-        <div class="container" style="margin-top: var(--spacing-sm);">
-            <div class="alert alert-success">{{ flash('success') }}</div>
-        </div>
-    {% endif %}
-    {% if flash('error') %}
-        <div class="container" style="margin-top: var(--spacing-sm);">
-            <div class="alert alert-error">{{ flash('error') }}</div>
-        </div>
-    {% endif %}
-
-    {# Main content area #}
     <main class="main-content">
-        {% block content %}{% endblock %}
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
     </main>
 
-    {# Footer #}
     <footer class="footer">
         <div class="container">
-            <p>&copy; {{ "now"|date("Y") }} {{ config('app.name', 'ZephyrPHP') }}. Powered by ZephyrPHP</p>
+            <p>&copy; {{ "now"|date("Y") }} {{ config('app.name', 'ZephyrPHP') }}</p>
         </div>
     </footer>
 
-    {# Render all queued JavaScript files #}
     {{ render_js() }}
-
-    {# Child templates can add extra scripts here #}
     {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,19 @@
+{
+    "name": "Default Theme",
+    "version": "1.0.0",
+    "description": "The default ZephyrPHP CMS theme",
+    "layouts": {
+        "base": {
+            "name": "Standard",
+            "description": "Standard page layout with header and footer"
+        },
+        "full-width": {
+            "name": "Full Width",
+            "description": "Full-width layout without container constraints"
+        },
+        "sidebar": {
+            "name": "With Sidebar",
+            "description": "Two-column layout with sidebar"
+        }
+    }
+}
