@@ -6,7 +6,7 @@ namespace App\Controllers\Auth;
 
 use ZephyrPHP\Core\Controllers\Controller;
 use ZephyrPHP\Auth\Auth;
-use ZephyrPHP\Hashing\Hash;
+use ZephyrPHP\Security\Hash;
 use App\Models\User;
 use App\Models\Role;
 
