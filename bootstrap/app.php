@@ -10,6 +10,30 @@
  * This file is optional - you can delete it if you don't need custom configuration.
  */
 
+/*
+|--------------------------------------------------------------------------
+| Setup Wizard Guard
+|--------------------------------------------------------------------------
+|
+| If the application has not been installed yet (no storage/.installed file),
+| redirect all requests to the setup wizard. This runs BEFORE the framework
+| boots, so it works even without database or module configuration.
+|
+*/
+
+$installedFile = BASE_PATH . '/storage/.installed';
+if (!file_exists($installedFile)) {
+    $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    // Allow setup routes, static assets, and favicon through
+    if (!str_starts_with($uri, '/setup') && !str_starts_with($uri, '/assets') && $uri !== '/favicon.ico') {
+        header('Location: /setup');
+        exit;
+    }
+}
+
+/*
+ */
+
 use ZephyrPHP\Exception\Handler;
 
 /*

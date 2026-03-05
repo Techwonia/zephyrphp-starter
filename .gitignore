@@ -24,6 +24,9 @@ Thumbs.db
 !/storage/logs/.gitkeep
 !/storage/cache/.gitkeep
 
+# Installation lock file
+/storage/.installed
+
 # Testing
 .phpunit.result.cache
 coverage/
