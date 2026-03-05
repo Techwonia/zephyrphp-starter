@@ -1,6 +1,6 @@
 {% extends "@theme/layouts/base.twig" %}
 
-{% block title %}Welcome to {{ config('app.name', 'ZephyrPHP') }}{% endblock %}
+{% block title %}{{ page.title ?? config('app.name', 'ZephyrPHP') }}{% endblock %}
 
 {% block content %}
 <div class="hero">

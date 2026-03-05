@@ -1,0 +1,10 @@
+{
+    "pages": [
+        {
+            "title": "Home",
+            "slug": "/",
+            "template": "home",
+            "layout": "base"
+        }
+    ]
+}

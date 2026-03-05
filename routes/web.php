@@ -9,7 +9,6 @@
 use ZephyrPHP\Router\Route;
 use ZephyrPHP\Middleware\AuthMiddleware;
 use ZephyrPHP\Middleware\GuestMiddleware;
-use App\Controllers\HomeController;
 use App\Controllers\Auth\LoginController;
 use App\Controllers\Auth\RegisterController;
 use App\Setup\SetupController;
@@ -25,9 +24,6 @@ if (!file_exists(BASE_PATH . '/storage/.installed')) {
     Route::post('/setup/create-admin', [SetupController::class, 'createAdmin']);
     Route::post('/setup/complete', [SetupController::class, 'complete']);
 }
-
-// Home page
-Route::get('/', [HomeController::class, 'index']);
 
 // Guest routes (redirect to /cms if already authenticated)
 Route::get('/login', [LoginController::class, 'showLoginForm'], [GuestMiddleware::class]);
