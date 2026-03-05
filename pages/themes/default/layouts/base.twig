@@ -7,20 +7,30 @@
 
     <title>{% block title %}{{ seo.title ?? page.title ?? config('app.name', 'ZephyrPHP') }}{% endblock %}</title>
 
-    {% if seo.description is defined and seo.description %}
+    {% if seo is defined and seo.description is defined and seo.description %}
     <meta name="description" content="{{ seo.description }}">
     {% endif %}
-
-    {% if seo.image is defined and seo.image %}
+    {% if seo is defined and seo.image is defined and seo.image %}
     <meta property="og:image" content="/{{ seo.image }}">
     {% endif %}
+    {% block meta %}{% endblock %}
 
+    {# Load core app assets #}
     {{ load_assets('app') }}
     {{ render_css() }}
 
     {% block styles %}{% endblock %}
 </head>
 <body>
+    {# Preview banner #}
+    {% if is_theme_preview is defined and is_theme_preview %}
+    <div style="background: #FFB800; color: #303030; text-align: center; padding: 8px; font-size: 14px; font-weight: 600;">
+        Theme Preview: {{ preview_theme_slug }} &mdash;
+        <a href="/cms/themes" style="color: #303030; text-decoration: underline;">Back to Themes</a>
+    </div>
+    {% endif %}
+
+    {# Main navigation #}
     <nav class="navbar">
         <div class="container">
             <a href="/" class="navbar-brand">
@@ -41,12 +51,28 @@
         </div>
     </nav>
 
+    {# Flash messages #}
+    {% if flash('success') %}
+        <div class="container" style="margin-top: var(--spacing-sm);">
+            <div class="alert alert-success">{{ flash('success') }}</div>
+        </div>
+    {% endif %}
+    {% if flash('error') %}
+        <div class="container" style="margin-top: var(--spacing-sm);">
+            <div class="alert alert-error">{{ flash('error') }}</div>
+        </div>
+    {% endif %}
+
+    {# Main content area #}
     <main class="main-content">
+        {% block body %}
         <div class="container">
             {% block content %}{% endblock %}
         </div>
+        {% endblock %}
     </main>
 
+    {# Footer #}
     <footer class="footer">
         <div class="container">
             <p>&copy; {{ "now"|date("Y") }} {{ config('app.name', 'ZephyrPHP') }}</p>
