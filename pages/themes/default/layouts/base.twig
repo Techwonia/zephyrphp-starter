@@ -20,6 +20,24 @@
     {{ render_css() }}
 
     {% block styles %}{% endblock %}
+
+    {% if theme_settings is defined and theme_settings %}
+    <style nonce="{{ csp_style_nonce() }}">
+        :root {
+            --theme-primary: {{ theme_settings.primary_color|default('#008060') }};
+            --theme-secondary: {{ theme_settings.secondary_color|default('#00d9ff') }};
+            --theme-bg: {{ theme_settings.bg_color|default('#0a0e27') }};
+            --theme-text: {{ theme_settings.text_color|default('#ffffff') }};
+            --theme-text-secondary: {{ theme_settings.text_secondary_color|default('#8892b0') }};
+            --theme-heading-font: '{{ theme_settings.heading_font|default('Inter') }}', sans-serif;
+            --theme-body-font: '{{ theme_settings.body_font|default('Inter') }}', sans-serif;
+            --theme-font-size: {{ theme_settings.base_font_size|default(16) }}px;
+        }
+        body { font-family: var(--theme-body-font); font-size: var(--theme-font-size); }
+        h1, h2, h3, h4, h5, h6 { font-family: var(--theme-heading-font); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    </style>
+    {% endif %}
 </head>
 <body>
     {# Preview banner #}
