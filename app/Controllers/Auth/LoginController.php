@@ -37,9 +37,22 @@ class LoginController extends Controller
         }
 
         if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
-            $intended = $this->session->get('url_intended', '/cms');
+            // Check for intended URL first (user was trying to access a protected page)
+            $intended = $this->session->get('url_intended');
             $this->session->remove('url_intended');
-            $this->redirect($intended);
+
+            if ($intended) {
+                $this->redirect($intended);
+                return;
+            }
+
+            // Role-based default redirect
+            $user = Auth::user();
+            if ($user && method_exists($user, 'hasRole') && $user->hasRole('admin')) {
+                $this->redirect('/cms');
+            } else {
+                $this->redirect($_ENV['AUTH_HOME'] ?? '/');
+            }
             return;
         }
 

@@ -71,26 +71,34 @@ class RegisterController extends Controller
         $user->save();
 
         if ($isFirstUser) {
-            $this->assignAdminRole($user);
+            $this->assignRole($user, 'admin', 'Admin', 'Administrator with full access');
+        } else {
+            $this->assignRole($user, 'customer', 'Customer', 'Registered customer');
         }
 
         Auth::login($user);
-        $this->redirect('/cms');
+
+        // Redirect based on role
+        if ($isFirstUser) {
+            $this->redirect('/cms');
+        } else {
+            $this->redirect($_ENV['AUTH_HOME'] ?? '/');
+        }
     }
 
-    private function assignAdminRole(User $user): void
+    private function assignRole(User $user, string $slug, string $name, string $description): void
     {
         try {
-            $adminRole = Role::findOneBy(['slug' => 'admin']);
-            if (!$adminRole) {
-                $adminRole = new Role();
-                $adminRole->setName('Admin');
-                $adminRole->setSlug('admin');
-                $adminRole->setDescription('Administrator with full access');
-                $adminRole->save();
+            $role = Role::findOneBy(['slug' => $slug]);
+            if (!$role) {
+                $role = new Role();
+                $role->setName($name);
+                $role->setSlug($slug);
+                $role->setDescription($description);
+                $role->save();
             }
 
-            $user->assignRole($adminRole);
+            $user->assignRole($role);
         } catch (\Throwable $e) {
             // Role assignment is non-critical, continue
         }
