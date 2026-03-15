@@ -1,7 +1,7 @@
 {
-    "name": "Starter",
+    "name": "Hello",
     "version": "1.0.0",
-    "description": "The ZephyrPHP CMS starter theme",
+    "description": "A clean, minimal starter theme for ZephyrPHP CMS",
     "layouts": {
         "base": {
             "name": "Standard",
@@ -10,11 +10,9 @@
     },
     "assets": {
         "css": [
-            "css/base.css"
+            "css/theme.css"
         ],
-        "js": [
-            {"path": "js/base.js", "defer": true}
-        ],
+        "js": [],
         "preload": [],
         "preconnect": [],
         "external_css": [],

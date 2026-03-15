@@ -4,48 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {{ assets_csp()|raw }}
-
     <title>{% block title %}{{ seo.title ?? page.title ?? config('app.name', 'ZephyrPHP') }}{% endblock %}</title>
-
     {% if seo is defined and seo.description is defined and seo.description %}
     <meta name="description" content="{{ seo.description }}">
     {% endif %}
-    {% if seo is defined and seo.image is defined and seo.image %}
-    <meta property="og:image" content="/{{ seo.image }}">
-    {% endif %}
     {% block meta %}{% endblock %}
-
     {{ assets_head()|raw }}
-
     {% if theme_settings is defined and theme_settings %}
     <style nonce="{{ csp_style_nonce() }}">
         :root {
             --color-primary: {{ theme_settings.primary_color|default('#111111') }};
-            --color-accent: {{ theme_settings.secondary_color|default('#555555') }};
             --color-bg: {{ theme_settings.bg_color|default('#ffffff') }};
             --color-text: {{ theme_settings.text_color|default('#111111') }};
             --color-muted: {{ theme_settings.text_secondary_color|default('#666666') }};
-            --font-heading: '{{ theme_settings.heading_font|default('Inter') }}', system-ui, sans-serif;
-            --font-body: '{{ theme_settings.body_font|default('Inter') }}', system-ui, sans-serif;
-            --font-size: {{ theme_settings.base_font_size|default(16) }}px;
         }
     </style>
     {% endif %}
-
     {% block styles %}{% endblock %}
 </head>
 <body>
-    {# Preview banner #}
     {% if is_theme_preview is defined and is_theme_preview %}
-    <div class="preview-banner">
-        Theme Preview: {{ preview_theme_slug }} &mdash;
-        <a href="/cms/themes">Back to Themes</a>
-    </div>
+    <div class="preview-banner">Preview: {{ preview_theme_slug }} &mdash; <a href="/cms/themes">Back</a></div>
     {% endif %}
 
     {% include "@theme/snippets/header.twig" %}
 
-    {# Flash messages #}
     {% if flash('success') %}
         <div class="container"><div class="alert alert--success">{{ flash('success') }}</div></div>
     {% endif %}
@@ -66,7 +49,6 @@
     </main>
 
     {% include "@theme/snippets/footer.twig" %}
-
     {{ assets_footer()|raw }}
     {% block scripts %}{% endblock %}
 </body>

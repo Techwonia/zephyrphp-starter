@@ -3,14 +3,12 @@
         <nav class="nav">
             <a href="/" class="nav__logo">{{ config('app.name', 'ZephyrPHP') }}</a>
             <ul class="nav__menu">
-                <li><a href="/">Home</a></li>
-                {% block nav_items %}{% endblock %}
                 {% set _auth = auth() %}
                 {% if _auth and _auth.check %}
-                    <li><a href="/cms">CMS</a></li>
+                    <li><a href="/cms">Dashboard</a></li>
                     <li><a href="/logout">Logout</a></li>
                 {% else %}
-                    <li><a href="/login">Login</a></li>
+                    <li><a href="/login">Sign In</a></li>
                 {% endif %}
             </ul>
         </nav>
