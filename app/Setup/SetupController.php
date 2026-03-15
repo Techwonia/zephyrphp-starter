@@ -359,7 +359,7 @@ class SetupController extends Controller
             // Seed default theme
             $stmt = $pdo->query("SELECT COUNT(*) FROM `cms_themes`");
             if ((int) $stmt->fetchColumn() === 0) {
-                $pdo->exec("INSERT INTO `cms_themes` (`name`, `slug`, `status`, `createdAt`, `updatedAt`) VALUES ('Default', 'default', 'live', NOW(), NOW())");
+                $pdo->exec("INSERT INTO `cms_themes` (`name`, `slug`, `status`, `createdAt`, `updatedAt`) VALUES ('Starter', 'starter', 'live', NOW(), NOW())");
             }
 
             echo json_encode(['success' => true, 'tables' => $results]);

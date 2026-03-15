@@ -1,7 +1,7 @@
 {
     "name": "Starter",
     "version": "1.0.0",
-    "description": "The default ZephyrPHP CMS starter theme",
+    "description": "The ZephyrPHP CMS starter theme",
     "layouts": {
         "base": {
             "name": "Standard",
