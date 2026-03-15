@@ -2,11 +2,11 @@
     {
         "name": "Colors",
         "settings": [
-            {"type": "color", "id": "primary_color", "label": "Primary Color", "default": "#008060"},
-            {"type": "color", "id": "secondary_color", "label": "Accent Color", "default": "#00d9ff"},
-            {"type": "color", "id": "bg_color", "label": "Body Background", "default": "#0a0e27"},
-            {"type": "color", "id": "text_color", "label": "Body Text Color", "default": "#ffffff"},
-            {"type": "color", "id": "text_secondary_color", "label": "Secondary Text", "default": "#8892b0"}
+            {"type": "color", "id": "primary_color", "label": "Primary Color", "default": "#111111"},
+            {"type": "color", "id": "secondary_color", "label": "Accent Color", "default": "#555555"},
+            {"type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff"},
+            {"type": "color", "id": "text_color", "label": "Text Color", "default": "#111111"},
+            {"type": "color", "id": "text_secondary_color", "label": "Muted Text", "default": "#666666"}
         ]
     },
     {
@@ -46,11 +46,8 @@
         "name": "Social Media",
         "settings": [
             {"type": "url", "id": "social_twitter", "label": "Twitter / X URL"},
-            {"type": "url", "id": "social_facebook", "label": "Facebook URL"},
-            {"type": "url", "id": "social_instagram", "label": "Instagram URL"},
-            {"type": "url", "id": "social_linkedin", "label": "LinkedIn URL"},
-            {"type": "url", "id": "social_youtube", "label": "YouTube URL"},
-            {"type": "url", "id": "social_github", "label": "GitHub URL"}
+            {"type": "url", "id": "social_github", "label": "GitHub URL"},
+            {"type": "url", "id": "social_linkedin", "label": "LinkedIn URL"}
         ]
     }
 ]

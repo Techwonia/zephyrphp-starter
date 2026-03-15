@@ -1,10 +1,10 @@
 {
     "current": {
-        "primary_color": "#008060",
-        "secondary_color": "#00d9ff",
-        "bg_color": "#0a0e27",
-        "text_color": "#ffffff",
-        "text_secondary_color": "#8892b0",
+        "primary_color": "#111111",
+        "secondary_color": "#555555",
+        "bg_color": "#ffffff",
+        "text_color": "#111111",
+        "text_secondary_color": "#666666",
         "heading_font": "Inter",
         "body_font": "Inter",
         "base_font_size": 16
@@ -15,19 +15,19 @@
                 "hero_main": {
                     "type": "hero-banner",
                     "settings": {
-                        "heading": "Build Modern Web Apps with ZephyrPHP",
-                        "subheading": "A lightweight, powerful PHP framework designed for speed, simplicity, and developer happiness. Get your project up and running in minutes.",
+                        "heading": "Build with ZephyrPHP",
+                        "subheading": "A lightweight PHP framework for modern web applications. Simple, fast, and secure.",
                         "button_text": "Get Started",
                         "button_url": "/register",
-                        "button_color": "#008060",
-                        "secondary_button_text": "Learn More",
-                        "secondary_button_url": "#features",
-                        "bg_color": "#0a0e27",
-                        "heading_color": "#00d9ff",
-                        "subheading_color": "#8892b0",
-                        "heading_size": 52,
+                        "button_color": "#111111",
+                        "secondary_button_text": "Documentation",
+                        "secondary_button_url": "/docs",
+                        "bg_color": "#ffffff",
+                        "heading_color": "#111111",
+                        "subheading_color": "#666666",
+                        "heading_size": 48,
                         "text_align": "center",
-                        "padding": 120
+                        "padding": 100
                     },
                     "blocks": {},
                     "block_order": []
@@ -35,182 +35,56 @@
                 "features_main": {
                     "type": "feature-columns",
                     "settings": {
-                        "heading": "Why Choose ZephyrPHP?",
-                        "subheading": "Everything you need to build fast, secure, and scalable web applications.",
+                        "heading": "Why ZephyrPHP?",
+                        "subheading": "",
                         "columns": "3",
-                        "text_align": "center",
-                        "bg_color": "#ffffff",
-                        "heading_color": "#0a0e27",
-                        "text_color": "#616161",
+                        "text_align": "left",
+                        "bg_color": "#fafafa",
+                        "heading_color": "#111111",
+                        "text_color": "#444444",
                         "padding": 80
                     },
                     "blocks": {
                         "feat_1": {
                             "type": "feature",
                             "settings": {
-                                "icon": "\u26a1",
-                                "title": "Lightning Fast",
-                                "description": "Optimized for performance with minimal overhead. Zero bloat, maximum speed for your applications."
+                                "icon": "",
+                                "title": "Fast",
+                                "description": "Minimal overhead. No bloat. Your application runs at full speed from day one."
                             }
                         },
                         "feat_2": {
                             "type": "feature",
                             "settings": {
-                                "icon": "\ud83d\udd12",
-                                "title": "Secure by Default",
-                                "description": "Built-in CSRF protection, XSS prevention, and authentication. Security is not an afterthought."
+                                "icon": "",
+                                "title": "Secure",
+                                "description": "CSRF, XSS, and authentication built in. Security is not an afterthought."
                             }
                         },
                         "feat_3": {
                             "type": "feature",
                             "settings": {
-                                "icon": "\ud83c\udfaf",
-                                "title": "Developer Friendly",
-                                "description": "Clean, intuitive APIs with Twig templating, Doctrine ORM, and a powerful CLI tool called Craftsman."
+                                "icon": "",
+                                "title": "Simple",
+                                "description": "Clean APIs, Twig templates, and a CLI tool called Craftsman. Get productive immediately."
                             }
                         }
                     },
                     "block_order": ["feat_1", "feat_2", "feat_3"]
                 },
-                "about_section": {
-                    "type": "image-with-text",
-                    "settings": {
-                        "heading": "A Framework That Gets Out of Your Way",
-                        "text": "<p>ZephyrPHP follows the principle of convention over configuration. Write less boilerplate and focus on what matters \u2014 your application logic.</p><p>With built-in support for routing, middleware, database migrations, and a visual CMS theme builder, you have everything you need from day one.</p>",
-                        "button_text": "View Documentation",
-                        "button_url": "#",
-                        "button_color": "#008060",
-                        "image_position": "right",
-                        "image_radius": 12,
-                        "bg_color": "#f8f9fa",
-                        "heading_color": "#0a0e27",
-                        "text_color": "#616161",
-                        "padding": 80
-                    },
-                    "blocks": {},
-                    "block_order": []
-                },
-                "testimonials_section": {
-                    "type": "testimonials",
-                    "settings": {
-                        "heading": "Loved by Developers",
-                        "columns": "3",
-                        "bg_color": "#ffffff",
-                        "card_bg": "#f8f9fa",
-                        "heading_color": "#0a0e27",
-                        "text_color": "#616161",
-                        "padding": 80
-                    },
-                    "blocks": {
-                        "test_1": {
-                            "type": "testimonial",
-                            "settings": {
-                                "quote": "ZephyrPHP made our development workflow incredibly efficient. The CMS module is a game-changer for content-heavy projects.",
-                                "name": "Sarah Mitchell",
-                                "role": "Lead Developer, TechFlow",
-                                "rating": 5
-                            }
-                        },
-                        "test_2": {
-                            "type": "testimonial",
-                            "settings": {
-                                "quote": "Finally, a PHP framework that doesn't try to do everything. It's fast, focused, and a joy to work with.",
-                                "name": "James Park",
-                                "role": "Freelance Developer",
-                                "rating": 5
-                            }
-                        },
-                        "test_3": {
-                            "type": "testimonial",
-                            "settings": {
-                                "quote": "The Craftsman CLI and Twig integration save us hours every sprint. Highly recommend for any PHP project.",
-                                "name": "Priya Sharma",
-                                "role": "CTO, LaunchPad Studio",
-                                "rating": 5
-                            }
-                        }
-                    },
-                    "block_order": ["test_1", "test_2", "test_3"]
-                },
-                "faq_section": {
-                    "type": "faq",
-                    "settings": {
-                        "heading": "Frequently Asked Questions",
-                        "text_align": "center",
-                        "max_width": 800,
-                        "gap": 8,
-                        "bg_color": "#f8f9fa",
-                        "item_bg": "#ffffff",
-                        "border_color": "#e3e3e3",
-                        "heading_color": "#0a0e27",
-                        "text_color": "#616161",
-                        "padding": 80
-                    },
-                    "blocks": {
-                        "faq_1": {
-                            "type": "question",
-                            "settings": {
-                                "question": "What are the system requirements?",
-                                "answer": "<p>ZephyrPHP requires PHP 8.1 or higher and Composer. It works with MySQL, PostgreSQL, or SQLite databases out of the box.</p>"
-                            }
-                        },
-                        "faq_2": {
-                            "type": "question",
-                            "settings": {
-                                "question": "How do I install ZephyrPHP?",
-                                "answer": "<p>Run <code>composer create-project zephyrphp/starter my-project</code> and you're ready to go. The starter template comes with everything pre-configured.</p>"
-                            }
-                        },
-                        "faq_3": {
-                            "type": "question",
-                            "settings": {
-                                "question": "Does it include a CMS?",
-                                "answer": "<p>Yes! The optional CMS module adds a full content management system with collections, page types, media management, and a Shopify-style visual theme builder.</p>"
-                            }
-                        },
-                        "faq_4": {
-                            "type": "question",
-                            "settings": {
-                                "question": "Can I use it for API-only projects?",
-                                "answer": "<p>Absolutely. ZephyrPHP includes an API module with JSON responses, request validation, and middleware support. You can use it as a full-stack framework or API-only backend.</p>"
-                            }
-                        }
-                    },
-                    "block_order": ["faq_1", "faq_2", "faq_3", "faq_4"]
-                },
                 "cta_bottom": {
                     "type": "cta-banner",
                     "settings": {
-                        "heading": "Ready to Build Something Amazing?",
-                        "text": "Get started with ZephyrPHP today. Free, open-source, and built for developers who value simplicity.",
-                        "button_text": "Create Your Project",
+                        "heading": "Ready to start?",
+                        "text": "Create your project in one command.",
+                        "button_text": "Get Started",
                         "button_url": "/register",
-                        "heading_size": 36,
-                        "bg_color": "#008060",
+                        "heading_size": 32,
+                        "bg_color": "#111111",
                         "heading_color": "#ffffff",
-                        "text_color": "rgba(255,255,255,0.85)",
+                        "text_color": "rgba(255,255,255,0.7)",
                         "button_bg": "#ffffff",
-                        "button_text_color": "#008060",
-                        "padding": 80
-                    },
-                    "blocks": {},
-                    "block_order": []
-                },
-                "newsletter_bottom": {
-                    "type": "newsletter",
-                    "settings": {
-                        "heading": "Stay in the Loop",
-                        "subheading": "Get notified about new releases, tutorials, and framework updates.",
-                        "placeholder": "your@email.com",
-                        "button_text": "Subscribe",
-                        "form_action": "#",
-                        "disclaimer": "No spam, ever. Unsubscribe anytime.",
-                        "button_color": "#008060",
-                        "bg_color": "#0a0e27",
-                        "heading_color": "#ffffff",
-                        "text_color": "#8892b0",
-                        "input_bg": "#16213e",
-                        "input_border": "#333333",
+                        "button_text_color": "#111111",
                         "padding": 80
                     },
                     "blocks": {},
@@ -220,11 +94,7 @@
             "order": [
                 "hero_main",
                 "features_main",
-                "about_section",
-                "testimonials_section",
-                "faq_section",
-                "cta_bottom",
-                "newsletter_bottom"
+                "cta_bottom"
             ]
         }
     }

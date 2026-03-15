@@ -1,19 +1,30 @@
 {
-    "name": "Default Theme",
+    "name": "Starter",
     "version": "1.0.0",
-    "description": "The default ZephyrPHP CMS theme",
+    "description": "The default ZephyrPHP CMS starter theme",
     "layouts": {
         "base": {
             "name": "Standard",
             "description": "Standard page layout with header and footer"
-        },
-        "full-width": {
-            "name": "Full Width",
-            "description": "Full-width layout without container constraints"
-        },
-        "sidebar": {
-            "name": "With Sidebar",
-            "description": "Two-column layout with sidebar"
+        }
+    },
+    "assets": {
+        "css": [
+            "css/base.css"
+        ],
+        "js": [
+            {"path": "js/base.js", "defer": true}
+        ],
+        "preload": [],
+        "preconnect": [],
+        "external_css": [],
+        "external_js": [],
+        "csp": {
+            "default-src": "'self'",
+            "script-src": "'self'",
+            "style-src": "'self' 'unsafe-inline'",
+            "img-src": "'self' data:",
+            "font-src": "'self'"
         }
     }
 }

@@ -3,23 +3,12 @@
 {% block title %}{{ page.title ?? config('app.name', 'ZephyrPHP') }}{% endblock %}
 
 {% block content %}
-<div class="hero">
-    <div class="container">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <span class="gradient-text">{{ config('app.name', 'ZephyrPHP') }}</span>
-            </h1>
-            <p class="hero-subtitle">Your site is ready. Sign in to manage content.</p>
-
-            <div class="cta-buttons">
-                <a href="/login" class="btn btn-primary">
-                    Sign In
-                </a>
-                <a href="/register" class="btn btn-secondary">
-                    Create Account
-                </a>
-            </div>
-        </div>
+<section class="hero">
+    <h1 class="hero__title">{{ config('app.name', 'ZephyrPHP') }}</h1>
+    <p class="hero__subtitle">Your site is ready. Sign in to start building.</p>
+    <div class="hero__actions">
+        <a href="/login" class="btn btn--primary">Sign In</a>
+        <a href="/register" class="btn btn--outline">Create Account</a>
     </div>
-</div>
+</section>
 {% endblock %}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {{ assets_csp()|raw }}
 
     <title>{% block title %}{{ seo.title ?? page.title ?? config('app.name', 'ZephyrPHP') }}{% endblock %}</title>
 
@@ -15,74 +15,45 @@
     {% endif %}
     {% block meta %}{% endblock %}
 
-    {# Load core app assets #}
-    {{ load_assets('app') }}
-    {{ render_css() }}
-
-    {% block styles %}{% endblock %}
+    {{ assets_head()|raw }}
 
     {% if theme_settings is defined and theme_settings %}
     <style nonce="{{ csp_style_nonce() }}">
         :root {
-            --theme-primary: {{ theme_settings.primary_color|default('#008060') }};
-            --theme-secondary: {{ theme_settings.secondary_color|default('#00d9ff') }};
-            --theme-bg: {{ theme_settings.bg_color|default('#0a0e27') }};
-            --theme-text: {{ theme_settings.text_color|default('#ffffff') }};
-            --theme-text-secondary: {{ theme_settings.text_secondary_color|default('#8892b0') }};
-            --theme-heading-font: '{{ theme_settings.heading_font|default('Inter') }}', sans-serif;
-            --theme-body-font: '{{ theme_settings.body_font|default('Inter') }}', sans-serif;
-            --theme-font-size: {{ theme_settings.base_font_size|default(16) }}px;
+            --color-primary: {{ theme_settings.primary_color|default('#111111') }};
+            --color-accent: {{ theme_settings.secondary_color|default('#555555') }};
+            --color-bg: {{ theme_settings.bg_color|default('#ffffff') }};
+            --color-text: {{ theme_settings.text_color|default('#111111') }};
+            --color-muted: {{ theme_settings.text_secondary_color|default('#666666') }};
+            --font-heading: '{{ theme_settings.heading_font|default('Inter') }}', system-ui, sans-serif;
+            --font-body: '{{ theme_settings.body_font|default('Inter') }}', system-ui, sans-serif;
+            --font-size: {{ theme_settings.base_font_size|default(16) }}px;
         }
-        body { font-family: var(--theme-body-font); font-size: var(--theme-font-size); }
-        h1, h2, h3, h4, h5, h6 { font-family: var(--theme-heading-font); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
     </style>
     {% endif %}
+
+    {% block styles %}{% endblock %}
 </head>
 <body>
     {# Preview banner #}
     {% if is_theme_preview is defined and is_theme_preview %}
-    <div style="background: #FFB800; color: #303030; text-align: center; padding: 8px; font-size: 14px; font-weight: 600;">
+    <div class="preview-banner">
         Theme Preview: {{ preview_theme_slug }} &mdash;
-        <a href="/cms/themes" style="color: #303030; text-decoration: underline;">Back to Themes</a>
+        <a href="/cms/themes">Back to Themes</a>
     </div>
     {% endif %}
 
-    {# Main navigation #}
-    <nav class="navbar">
-        <div class="container">
-            <a href="/" class="navbar-brand">
-                <span class="brand-icon">&#9889;</span>
-                {{ config('app.name', 'ZephyrPHP') }}
-            </a>
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">Home</a></li>
-                {% block nav_items %}{% endblock %}
-                {% set _auth = auth() %}
-                {% if _auth and _auth.check %}
-                    <li><a href="/cms" class="nav-link">CMS</a></li>
-                    <li><a href="/logout" class="nav-link">Logout</a></li>
-                {% else %}
-                    <li><a href="/login" class="nav-link">Login</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
+    {% include "@theme/snippets/header.twig" %}
 
     {# Flash messages #}
     {% if flash('success') %}
-        <div class="container" style="margin-top: var(--spacing-sm);">
-            <div class="alert alert-success">{{ flash('success') }}</div>
-        </div>
+        <div class="container"><div class="alert alert--success">{{ flash('success') }}</div></div>
     {% endif %}
     {% if flash('error') %}
-        <div class="container" style="margin-top: var(--spacing-sm);">
-            <div class="alert alert-error">{{ flash('error') }}</div>
-        </div>
+        <div class="container"><div class="alert alert--error">{{ flash('error') }}</div></div>
     {% endif %}
 
-    {# Main content area #}
-    <main class="main-content">
+    <main>
         {% block body %}
         {% if use_sections is defined and use_sections and sections_html is defined %}
             {{ sections_html|raw }}
@@ -94,14 +65,9 @@
         {% endblock %}
     </main>
 
-    {# Footer #}
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; {{ "now"|date("Y") }} {{ config('app.name', 'ZephyrPHP') }}</p>
-        </div>
-    </footer>
+    {% include "@theme/snippets/footer.twig" %}
 
-    {{ render_js() }}
+    {{ assets_footer()|raw }}
     {% block scripts %}{% endblock %}
 </body>
 </html>

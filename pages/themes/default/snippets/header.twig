@@ -1,7 +1,18 @@
-{# Header snippet - include with: {% include "@theme/snippets/header.twig" %} #}
-<header class="page-header" style="padding: 2rem 0; border-bottom: 1px solid rgba(100, 255, 218, 0.1); margin-bottom: 2rem;">
-    <h1>{{ page.title ?? 'Page' }}</h1>
-    {% if page.subtitle is defined and page.subtitle %}
-        <p style="color: var(--text-secondary);">{{ page.subtitle }}</p>
-    {% endif %}
+<header class="site-header">
+    <div class="container">
+        <nav class="nav">
+            <a href="/" class="nav__logo">{{ config('app.name', 'ZephyrPHP') }}</a>
+            <ul class="nav__menu">
+                <li><a href="/">Home</a></li>
+                {% block nav_items %}{% endblock %}
+                {% set _auth = auth() %}
+                {% if _auth and _auth.check %}
+                    <li><a href="/cms">CMS</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
 </header>
