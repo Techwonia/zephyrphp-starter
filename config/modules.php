@@ -7,14 +7,10 @@
  * Only enabled modules will be loaded, reducing memory footprint
  * and improving performance for applications that don't need all features.
  *
- * Install/Remove modules via Craftsman:
- *   php craftsman add cache
- *   php craftsman remove mail
+ * Install modules via Composer:
+ *   composer require zephyrphp/cache
  *
- * Enable/Disable via Craftsman:
- *   php craftsman module:enable cache
- *   php craftsman module:disable mail
- *   php craftsman module:list
+ * Then enable them here by setting to true.
  */
 
 return [
@@ -60,19 +56,19 @@ return [
     | Optional Modules (Require Installation)
     |--------------------------------------------------------------------------
     |
-    | Install with: php craftsman add <module>
+    | Install with: composer require zephyrphp/<module>
     |
     */
 
     // Cache - Multiple cache drivers (file, redis, apcu, array)
-    // Install: php craftsman add cache
+    // Install: composer require zephyrphp/ cache
     'cache' => false,
 
     // Mail - Email sending (smtp, mail, log)
-    // Install: php craftsman add mail
+    // Install: composer require zephyrphp/ mail
     'mail' => false,
 
     // Queue - Background job processing (sync, database, redis, file)
-    // Install: php craftsman add queue
+    // Install: composer require zephyrphp/ queue
     'queue' => false,
 ];

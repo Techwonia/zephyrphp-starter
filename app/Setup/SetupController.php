@@ -356,46 +356,7 @@ class SetupController extends Controller
             ");
             $results[] = ['table' => 'role_user', 'status' => 'created'];
 
-            // 4. CMS Page Types
-            $this->createTable($pdo, 'cms_page_types', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `name` VARCHAR(255) NOT NULL,
-                `slug` VARCHAR(100) NOT NULL,
-                `template` VARCHAR(255) NOT NULL,
-                `description` TEXT NULL DEFAULT NULL,
-                `has_seo` TINYINT(1) NOT NULL DEFAULT 1,
-                `is_publishable` TINYINT(1) NOT NULL DEFAULT 1,
-                `created_by` INT NULL DEFAULT NULL,
-                `page_mode` VARCHAR(20) NOT NULL DEFAULT 'static',
-                `layout` VARCHAR(100) NOT NULL DEFAULT 'base',
-                `url_prefix` VARCHAR(255) NULL DEFAULT NULL,
-                `items_per_page` INT NOT NULL DEFAULT 10,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                `updatedAt` DATETIME NULL DEFAULT NULL,
-                UNIQUE KEY `uniq_pt_slug` (`slug`)
-            ");
-            $results[] = ['table' => 'cms_page_types', 'status' => 'created'];
-
-            // 5. CMS Page Type Fields
-            $this->createTable($pdo, 'cms_page_type_fields', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `page_type_id` INT UNSIGNED NOT NULL,
-                `name` VARCHAR(255) NOT NULL,
-                `slug` VARCHAR(100) NOT NULL,
-                `type` VARCHAR(50) NOT NULL DEFAULT 'text',
-                `options` JSON NULL DEFAULT NULL,
-                `is_required` TINYINT(1) NOT NULL DEFAULT 0,
-                `is_searchable` TINYINT(1) NOT NULL DEFAULT 0,
-                `is_listable` TINYINT(1) NOT NULL DEFAULT 1,
-                `default_value` TEXT NULL DEFAULT NULL,
-                `sort_order` INT NOT NULL DEFAULT 0,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                `updatedAt` DATETIME NULL DEFAULT NULL,
-                CONSTRAINT `fk_ptf_page_type` FOREIGN KEY (`page_type_id`) REFERENCES `cms_page_types`(`id`) ON DELETE CASCADE
-            ");
-            $results[] = ['table' => 'cms_page_type_fields', 'status' => 'created'];
-
-            // 6. CMS Themes
+            // 4. CMS Themes
             $this->createTable($pdo, 'cms_themes', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `name` VARCHAR(255) NOT NULL,
