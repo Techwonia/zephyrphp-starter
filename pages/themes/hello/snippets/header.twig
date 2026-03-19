@@ -6,7 +6,7 @@
                 {% set _auth = auth() %}
                 {% if _auth and _auth.check %}
                     <li><a href="/cms">Dashboard</a></li>
-                    <li><a href="/logout">Logout</a></li>
+                    <li><form method="POST" action="/logout" style="display:inline;">{{ csrf_field()|raw }}<button type="submit" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;">Logout</button></form></li>
                 {% else %}
                     <li><a href="/login">Sign In</a></li>
                 {% endif %}

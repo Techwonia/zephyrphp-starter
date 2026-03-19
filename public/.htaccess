@@ -1,6 +1,181 @@
+# =========================================
+# ZephyrPHP Production Security Configuration
+# =========================================
+
+# Disable directory browsing, MultiViews, and CGI execution
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+Options -Indexes -ExecCGI
+
+# Hide server signature
+ServerSignature Off
+
+# =========================================
+# Restrict HTTP Methods
+# =========================================
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_METHOD} !^(GET|POST|HEAD|PUT|PATCH|DELETE|OPTIONS)$ [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# Block TRACE method (prevents XST attacks)
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_METHOD} ^TRACE [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# =========================================
+# Security Headers (OWASP Recommended)
+# =========================================
+<IfModule mod_headers.c>
+    # Prevent MIME type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Prevent clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # XSS Protection — disabled (modern CSP replaces this)
+    Header always set X-XSS-Protection "0"
+
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Permissions Policy — deny access to sensitive browser APIs
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+
+    # Cross-Origin Opener Policy (Spectre protection)
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+
+    # Cross-Origin Resource Policy
+    Header always set Cross-Origin-Resource-Policy "same-origin"
+
+    # Prevent Adobe Flash/PDF cross-domain attacks
+    Header always set X-Permitted-Cross-Domain-Policies "none"
+
+    # HSTS — auto-detected: only sent when request is over HTTPS (safe for any environment)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" "expr=%{HTTPS} == 'on'"
+
+    # Remove PHP version exposure
+    Header always unset X-Powered-By
+    Header unset X-Powered-By
+</IfModule>
+
+# =========================================
+# Protect Sensitive Files
+# =========================================
+
+# Block ALL dotfiles (.env, .git, etc.) — except .well-known (SSL/ACME)
+<FilesMatch "^\.(?!well-known)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Block backup files, config files, logs, SQL dumps, shell scripts
+<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op]|yml|yaml|md|lock|env)|~)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Block composer/npm/package manager files
+<FilesMatch "(composer\.(json|lock)|package\.json|package-lock\.json|phpunit\.xml)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Block PHP execution in upload/storage directories
+<IfModule mod_rewrite.c>
+    RewriteRule ^(storage|uploads|media)/.*\.(php|phtml|php[0-9]|phar|shtml)$ - [F,L]
+</IfModule>
+
+# =========================================
+# PHP Security Settings (mod_php only)
+# =========================================
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_flag display_startup_errors Off
+    php_flag log_errors On
+    php_flag expose_php Off
+    php_flag allow_url_include Off
+    php_value max_input_vars 1000
+    php_value post_max_size 10M
+    php_value upload_max_filesize 10M
+    php_value max_execution_time 30
+    php_value session.cookie_httponly 1
+    php_value session.use_strict_mode 1
+    php_value session.use_only_cookies 1
+</IfModule>
+
+# =========================================
+# URL Rewriting
+# =========================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Uncomment and adjust if deploying to a subdirectory
+    # RewriteBase /your-subdirectory/
+
+    # Block hidden files/dirs (except .well-known)
+    RewriteCond %{REQUEST_URI} "!(^|/)\.well-known/" [NC]
+    RewriteCond %{SCRIPT_FILENAME} -d [OR]
+    RewriteCond %{SCRIPT_FILENAME} -f
+    RewriteRule "(^|/)\." - [F]
+
+    # Redirect trailing slashes
     RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Front controller
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# =========================================
+# Compression
+# =========================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+    AddOutputFilterByType DEFLATE text/javascript application/javascript application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# =========================================
+# Browser Caching
+# =========================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# Disable ETag (prevents inode fingerprinting)
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+FileETag None

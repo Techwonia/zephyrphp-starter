@@ -29,4 +29,3 @@ Route::get('/login', [LoginController::class, 'showLoginForm'], [GuestMiddleware
 Route::post('/login', [LoginController::class, 'login'], [GuestMiddleware::class]);
 // Auth routes
 Route::post('/logout', [LoginController::class, 'logout'], [AuthMiddleware::class]);
-Route::get('/logout', [LoginController::class, 'logout'], [AuthMiddleware::class]);

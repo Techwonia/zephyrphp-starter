@@ -13,10 +13,10 @@
     {% if theme_settings is defined and theme_settings %}
     <style nonce="{{ csp_style_nonce() }}">
         :root {
-            --color-primary: {{ theme_settings.primary_color|default('#111111') }};
-            --color-bg: {{ theme_settings.bg_color|default('#ffffff') }};
-            --color-text: {{ theme_settings.text_color|default('#111111') }};
-            --color-muted: {{ theme_settings.text_secondary_color|default('#666666') }};
+            --color-primary: {{ theme_settings.primary_color|default('#111111')|e('css') }};
+            --color-bg: {{ theme_settings.bg_color|default('#ffffff')|e('css') }};
+            --color-text: {{ theme_settings.text_color|default('#111111')|e('css') }};
+            --color-muted: {{ theme_settings.text_secondary_color|default('#666666')|e('css') }};
         }
     </style>
     {% endif %}

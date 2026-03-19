@@ -38,10 +38,15 @@ class LoginController extends Controller
 
         if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
             // Check for intended URL first (user was trying to access a protected page)
-            $intended = $this->session->get('url_intended');
+            $intended = $this->session->get('url_intended', '/');
             $this->session->remove('url_intended');
 
-            if ($intended) {
+            // Validate redirect target to prevent open redirect
+            if (!str_starts_with($intended, '/') || str_starts_with($intended, '//')) {
+                $intended = '/';
+            }
+
+            if ($intended && $intended !== '/') {
                 $this->redirect($intended);
                 return;
             }

@@ -15,8 +15,41 @@ class SetupController extends Controller
     {
         // If already installed, redirect to home
         if (file_exists(BASE_PATH . '/storage/.installed')) {
-            header('Location: /');
+            $basePath = $_ENV['BASE_PATH'] ?? '';
+            header('Location: ' . $basePath . '/');
             exit;
+        }
+
+        // Pre-flight writable check
+        $writableErrors = [];
+        $storagePath = BASE_PATH . '/storage';
+        $envPath = BASE_PATH . '/.env';
+        $envExamplePath = BASE_PATH . '/.env.example';
+
+        if (!is_dir($storagePath)) {
+            $writableErrors[] = "Directory does not exist: storage/";
+        } elseif (!is_writable($storagePath)) {
+            $writableErrors[] = "Directory is not writable: storage/";
+        }
+
+        // Check .env writability (or ability to create it)
+        if (file_exists($envPath)) {
+            if (!is_writable($envPath)) {
+                $writableErrors[] = "File is not writable: .env";
+            }
+        } else {
+            // .env doesn't exist yet; check if the directory is writable so we can create it
+            if (!is_writable(BASE_PATH)) {
+                $writableErrors[] = "Cannot create .env: project root is not writable";
+            }
+        }
+
+        // Generate CSRF token for setup wizard
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (empty($_SESSION['_setup_csrf'])) {
+            $_SESSION['_setup_csrf'] = bin2hex(random_bytes(32));
         }
 
         // Read current .env values as defaults
@@ -25,6 +58,8 @@ class SetupController extends Controller
         return $this->render('setup/wizard', [
             'env' => $env,
             'timezones' => \DateTimeZone::listIdentifiers(),
+            'csrf_token' => $_SESSION['_setup_csrf'],
+            'writable_errors' => $writableErrors,
         ]);
     }
 
@@ -34,6 +69,10 @@ class SetupController extends Controller
     public function saveSettings()
     {
         header('Content-Type: application/json');
+
+        if (!$this->validatePostRequest()) {
+            exit;
+        }
 
         try {
             $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
@@ -48,7 +87,7 @@ class SetupController extends Controller
             echo json_encode(['success' => true]);
         } catch (\Throwable $e) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
         }
         exit;
     }
@@ -60,6 +99,10 @@ class SetupController extends Controller
     {
         header('Content-Type: application/json');
 
+        if (!$this->validatePostRequest()) {
+            exit;
+        }
+
         try {
             $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 
@@ -69,6 +112,10 @@ class SetupController extends Controller
 
             if ($driver === 'pdo_sqlite') {
                 $dbPath = $data['db_path'] ?? 'database/database.sqlite';
+                $dbPath = $this->validateSqlitePath($dbPath);
+                if ($dbPath === null) {
+                    exit;
+                }
                 $envValues['DB_DATABASE'] = $dbPath;
                 // Create SQLite file if needed
                 $fullPath = BASE_PATH . '/' . $dbPath;
@@ -80,8 +127,24 @@ class SetupController extends Controller
                     touch($fullPath);
                 }
             } else {
-                $envValues['DB_HOST'] = $data['db_host'] ?? '127.0.0.1';
-                $envValues['DB_PORT'] = $data['db_port'] ?? '3306';
+                $dbHost = $data['db_host'] ?? '127.0.0.1';
+                $dbPort = $data['db_port'] ?? '3306';
+
+                // Validate host: only allow hostnames/IPs, not file:// or other schemes
+                if (!preg_match('/^[a-zA-Z0-9.\-:]+$/', $dbHost)) {
+                    echo json_encode(['success' => false, 'error' => 'Invalid database host.']);
+                    exit;
+                }
+
+                // Validate port: must be a valid integer in range
+                $dbPort = (string)(int)$dbPort;
+                if ((int)$dbPort < 1 || (int)$dbPort > 65535) {
+                    echo json_encode(['success' => false, 'error' => 'Invalid database port.']);
+                    exit;
+                }
+
+                $envValues['DB_HOST'] = $dbHost;
+                $envValues['DB_PORT'] = $dbPort;
                 $envValues['DB_DATABASE'] = $data['db_name'] ?? 'zephyrphp';
                 $envValues['DB_USERNAME'] = $data['db_user'] ?? 'root';
                 $envValues['DB_PASSWORD'] = $data['db_pass'] ?? '';
@@ -92,7 +155,7 @@ class SetupController extends Controller
             echo json_encode(['success' => true]);
         } catch (\Throwable $e) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
         }
         exit;
     }
@@ -104,12 +167,20 @@ class SetupController extends Controller
     {
         header('Content-Type: application/json');
 
+        if (!$this->validatePostRequest()) {
+            exit;
+        }
+
         try {
             $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
             $driver = $data['db_driver'] ?? 'pdo_mysql';
 
             if ($driver === 'pdo_sqlite') {
                 $dbPath = $data['db_path'] ?? 'database/database.sqlite';
+                $dbPath = $this->validateSqlitePath($dbPath);
+                if ($dbPath === null) {
+                    exit;
+                }
                 $fullPath = BASE_PATH . '/' . $dbPath;
                 $pdo = new \PDO("sqlite:$fullPath");
                 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
@@ -166,6 +237,10 @@ class SetupController extends Controller
     {
         header('Content-Type: application/json');
 
+        if (!$this->validatePostRequest()) {
+            exit;
+        }
+
         try {
             $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
             $driver = $data['db_driver'] ?? 'pdo_mysql';
@@ -185,17 +260,44 @@ class SetupController extends Controller
                 'pdo_pgsql' => "pgsql:host=$host;port=$port",
             ];
 
+            // First, try connecting directly to the database (it may already exist on shared hosting)
+            $dsnWithDb = [
+                'pdo_mysql' => "mysql:host=$host;port=$port;dbname=$dbName;charset=utf8mb4",
+                'pdo_pgsql' => "pgsql:host=$host;port=$port;dbname=$dbName",
+            ];
+
+            try {
+                $testDsn = $dsnWithDb[$driver] ?? "mysql:host=$host;port=$port;dbname=$dbName;charset=utf8mb4";
+                $testPdo = new \PDO($testDsn, $user, $pass);
+                $testPdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+                echo json_encode(['success' => true, 'message' => "Database '$dbName' already exists and is accessible"]);
+                exit;
+            } catch (\PDOException $e) {
+                // Database doesn't exist or not accessible, try to create it
+            }
+
             $dsn = $dsnMap[$driver] ?? "mysql:host=$host;port=$port";
             $pdo = new \PDO($dsn, $user, $pass);
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-            $charset = $driver === 'pdo_mysql' ? ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci' : '';
-            $pdo->exec("CREATE DATABASE IF NOT EXISTS " . $this->quoteIdentifier($pdo, $dbName) . $charset);
-
-            echo json_encode(['success' => true, 'message' => "Database '$dbName' created"]);
+            try {
+                $charset = $driver === 'pdo_mysql' ? ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci' : '';
+                $pdo->exec("CREATE DATABASE IF NOT EXISTS " . $this->quoteIdentifier($pdo, $dbName) . $charset);
+                echo json_encode(['success' => true, 'message' => "Database '$dbName' created"]);
+            } catch (\PDOException $e) {
+                $msg = $e->getMessage();
+                if (str_contains($msg, 'Access denied') || str_contains($msg, 'permission denied') || str_contains($msg, '1044')) {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => "CREATE DATABASE permission denied. On shared hosting, you typically need to create the database through your hosting control panel (cPanel, Plesk, etc.) and then enter the name here.",
+                    ]);
+                } else {
+                    echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
+                }
+            }
         } catch (\PDOException $e) {
             http_response_code(200);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
         }
         exit;
     }
@@ -206,6 +308,10 @@ class SetupController extends Controller
     public function installTables()
     {
         header('Content-Type: application/json');
+
+        if (!$this->validatePostRequest()) {
+            exit;
+        }
 
         try {
             // Re-read .env to get latest DB config
@@ -365,7 +471,7 @@ class SetupController extends Controller
             echo json_encode(['success' => true, 'tables' => $results]);
         } catch (\Throwable $e) {
             http_response_code(200);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
         }
         exit;
     }
@@ -376,6 +482,10 @@ class SetupController extends Controller
     public function createAdmin()
     {
         header('Content-Type: application/json');
+
+        if (!$this->validatePostRequest()) {
+            exit;
+        }
 
         try {
             $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
@@ -389,7 +499,7 @@ class SetupController extends Controller
             $errors = [];
             if (empty($name)) $errors[] = 'Name is required';
             if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
-            if (strlen($password) < 8) $errors[] = 'Password must be at least 8 characters';
+            if (strlen($password) < 12) $errors[] = 'Password must be at least 12 characters';
             if ($password !== $passwordConfirm) $errors[] = 'Passwords do not match';
 
             if (!empty($errors)) {
@@ -436,7 +546,7 @@ class SetupController extends Controller
             echo json_encode(['success' => true, 'message' => 'Admin account created']);
         } catch (\Throwable $e) {
             http_response_code(200);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
         }
         exit;
     }
@@ -447,6 +557,10 @@ class SetupController extends Controller
     public function complete()
     {
         header('Content-Type: application/json');
+
+        if (!$this->validatePostRequest()) {
+            exit;
+        }
 
         try {
             // Generate APP_KEY if not set
@@ -472,9 +586,71 @@ class SetupController extends Controller
             echo json_encode(['success' => true, 'redirect' => '/cms']);
         } catch (\Throwable $e) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
         }
         exit;
+    }
+
+    // ─── Security Helpers ────────────────────────────────────
+
+    /**
+     * Validate CSRF token and installation status for POST endpoints.
+     * Returns true if validation passes, false if it failed (and response was sent).
+     */
+    private function validatePostRequest(): bool
+    {
+        // Defense-in-depth: block POST requests after installation
+        if (file_exists(BASE_PATH . '/storage/.installed')) {
+            echo json_encode(['success' => false, 'error' => 'Application already installed.']);
+            return false;
+        }
+
+        // CSRF validation
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!hash_equals($_SESSION['_setup_csrf'] ?? '', $token)) {
+            echo json_encode(['success' => false, 'error' => 'Invalid CSRF token.']);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate SQLite database path to prevent path traversal.
+     * Returns the validated path or null if invalid (and response was sent).
+     */
+    private function validateSqlitePath(string $dbPath): ?string
+    {
+        if (str_contains($dbPath, '..') || str_contains($dbPath, "\0") || preg_match('#^[/\\\\]#', $dbPath)) {
+            echo json_encode(['success' => false, 'error' => 'Invalid database path.']);
+            return null;
+        }
+
+        // Verify the resolved path is within BASE_PATH
+        $fullPath = BASE_PATH . '/' . $dbPath;
+        $parentDir = dirname($fullPath);
+        if (is_dir($parentDir)) {
+            $realParent = realpath($parentDir);
+            $realBase = realpath(BASE_PATH);
+            if ($realParent === false || $realBase === false || !str_starts_with($realParent, $realBase)) {
+                echo json_encode(['success' => false, 'error' => 'Invalid database path.']);
+                return null;
+            }
+        }
+
+        return $dbPath;
+    }
+
+    /**
+     * Format error message based on debug mode.
+     */
+    private function safeErrorMessage(\Throwable $e): string
+    {
+        error_log('Setup error: ' . $e->getMessage());
+        return ($_ENV['APP_DEBUG'] ?? false) ? $e->getMessage() : 'An error occurred. Check server logs.';
     }
 
     // ─── Helpers ──────────────────────────────────────────
@@ -511,7 +687,11 @@ class SetupController extends Controller
         $content = file_exists($envPath) ? file_get_contents($envPath) : '';
 
         foreach ($updates as $key => $value) {
-            $escaped = str_contains($value, ' ') ? "\"$value\"" : $value;
+            // Strip newlines and null bytes to prevent .env injection
+            $value = str_replace(["\r", "\n", "\0"], '', $value);
+            $escaped = (str_contains($value, ' ') || str_contains($value, '#') || str_contains($value, '"') || str_contains($value, "'"))
+                ? '"' . addslashes($value) . '"'
+                : $value;
             if (preg_match("/^" . preg_quote($key, '/') . "=.*/m", $content)) {
                 $content = preg_replace("/^" . preg_quote($key, '/') . "=.*/m", "$key=$escaped", $content);
             } else {
@@ -583,6 +763,8 @@ class SetupController extends Controller
         if (str_contains($message, 'could not find driver')) {
             return 'PHP database driver not installed. Install the required PHP extension.';
         }
-        return $message;
+        // Don't leak raw PDO error messages
+        error_log('Setup DB error: ' . $message);
+        return 'Database connection failed. Check your credentials and try again.';
     }
 }
