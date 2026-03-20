@@ -12,7 +12,6 @@
 
         :root {
             --bg: #0a0a0a;
-            --bg-card: #111;
             --bg-input: #1a1a1a;
             --border: rgba(255,255,255,0.08);
             --border-focus: rgba(6,182,212,0.5);
@@ -20,9 +19,9 @@
             --text-2: #888;
             --text-3: #555;
             --primary: #06b6d4;
+            --primary-light: #22d3ee;
             --error: #ef4444;
             --success: #22c55e;
-            --radius: 12px;
             --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
@@ -31,78 +30,184 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Split Layout ── */
+        .login-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+        }
+
+        /* ── Left Panel — Neon Grid ── */
+        .login-left {
+            position: relative;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            -webkit-font-smoothing: antialiased;
-            position: relative;
-            overflow: hidden;
+            border-right: 1px solid var(--border);
         }
 
-        /* Grid pattern background */
-        body::before {
+        /* Grid pattern */
+        .login-left::before {
             content: '';
-            position: fixed;
+            position: absolute;
             inset: 0;
             background-image:
                 linear-gradient(var(--border) 1px, transparent 1px),
                 linear-gradient(90deg, var(--border) 1px, transparent 1px);
             background-size: 48px 48px;
-            opacity: 0.4;
-            pointer-events: none;
+            opacity: 0.5;
         }
 
-        /* Subtle glow */
-        body::after {
+        /* Neon grid lines with snake animation */
+        @keyframes neon-v {
+            0%   { background-position: 0 -100%; }
+            100% { background-position: 0 200%; }
+        }
+
+        @keyframes neon-h {
+            0%   { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .neon-line-v {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: var(--border);
+            overflow: hidden;
+        }
+
+        .neon-line-v::after {
             content: '';
-            position: fixed;
-            top: -20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(6,182,212,0.06), transparent 70%);
-            pointer-events: none;
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 30%, rgba(6,182,212,0.1) 40%, rgba(6,182,212,0.4) 48%, rgba(6,182,212,0.7) 50%, rgba(6,182,212,0.4) 52%, rgba(6,182,212,0.1) 60%, transparent 70%);
+            background-size: 100% 300%;
+            animation: neon-v 9s ease-in-out infinite;
         }
 
-        .login-card {
+        .neon-line-v::before {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0;
+            left: -6px; width: 13px;
+            background: linear-gradient(to bottom, transparent 30%, rgba(6,182,212,0.0) 42%, rgba(6,182,212,0.12) 49%, rgba(6,182,212,0.0) 56%, transparent 70%);
+            background-size: 100% 300%;
+            animation: neon-v 9s ease-in-out infinite;
+            filter: blur(6px);
+        }
+
+        .neon-line-v:nth-child(1) { left: 25%; }
+        .neon-line-v:nth-child(2) { left: 50%; }
+        .neon-line-v:nth-child(2)::after, .neon-line-v:nth-child(2)::before { animation-delay: -3s; }
+        .neon-line-v:nth-child(3) { left: 75%; }
+        .neon-line-v:nth-child(3)::after, .neon-line-v:nth-child(3)::before { animation-delay: -6s; }
+
+        .neon-line-h {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border);
+            overflow: hidden;
+        }
+
+        .neon-line-h::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, transparent 30%, rgba(6,182,212,0.1) 40%, rgba(6,182,212,0.4) 48%, rgba(6,182,212,0.7) 50%, rgba(6,182,212,0.4) 52%, rgba(6,182,212,0.1) 60%, transparent 70%);
+            background-size: 300% 100%;
+            animation: neon-h 11s ease-in-out infinite;
+        }
+
+        .neon-line-h::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            top: -6px; height: 13px;
+            background: linear-gradient(to right, transparent 30%, rgba(6,182,212,0.0) 42%, rgba(6,182,212,0.12) 49%, rgba(6,182,212,0.0) 56%, transparent 70%);
+            background-size: 300% 100%;
+            animation: neon-h 11s ease-in-out infinite;
+            filter: blur(6px);
+        }
+
+        .neon-line-h:nth-child(4) { top: 33%; }
+        .neon-line-h:nth-child(5) { top: 66%; }
+        .neon-line-h:nth-child(5)::after, .neon-line-h:nth-child(5)::before { animation-delay: -4s; }
+
+        /* Circle at intersection */
+        @keyframes circle-glow {
+            0%, 100% { border-color: var(--border); box-shadow: none; }
+            50% { border-color: rgba(6,182,212,0.25); box-shadow: 0 0 16px rgba(6,182,212,0.1); }
+        }
+
+        .neon-circle {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: circle-glow 7s ease-in-out infinite;
+        }
+
+        .neon-circle:nth-child(6) { top: 33%; left: 25%; }
+        .neon-circle:nth-child(7) { top: 66%; left: 75%; animation-delay: -3s; }
+
+        /* Center content on left */
+        .left-content {
             position: relative;
             z-index: 1;
-            width: 100%;
+            text-align: center;
+            padding: 48px;
             max-width: 400px;
-            padding: 40px;
-            margin: 24px;
         }
 
-        .login-logo {
+        .left-brand {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .left-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .left-desc {
+            font-size: 0.9rem;
+            color: var(--text-2);
+            line-height: 1.6;
+        }
+
+        /* ── Right Panel — Form ── */
+        .login-right {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 40px;
-            color: var(--text);
+            padding: 48px;
         }
 
-        .login-logo .badge {
-            font-size: 0.65rem;
-            font-weight: 600;
-            background: rgba(6,182,212,0.15);
-            color: var(--primary);
-            padding: 2px 8px;
-            border-radius: 999px;
+        .login-form-wrap {
+            width: 100%;
+            max-width: 380px;
         }
 
         .login-title {
             font-size: 1.5rem;
             font-weight: 700;
-            text-align: center;
             margin-bottom: 4px;
         }
 
         .login-subtitle {
-            text-align: center;
             color: var(--text-2);
             font-size: 0.875rem;
             margin-bottom: 32px;
@@ -138,12 +243,7 @@
 
         .form-control::placeholder { color: var(--text-3); }
         .form-control.is-invalid { border-color: var(--error); }
-
-        .invalid-feedback {
-            color: var(--error);
-            font-size: 0.8rem;
-            margin-top: 4px;
-        }
+        .invalid-feedback { color: var(--error); font-size: 0.8rem; margin-top: 4px; }
 
         .btn-submit {
             width: 100%;
@@ -160,7 +260,7 @@
             margin-top: 8px;
         }
 
-        .btn-submit:hover { background: #22d3ee; }
+        .btn-submit:hover { background: var(--primary-light); }
 
         .alert {
             padding: 10px 14px;
@@ -169,17 +269,8 @@
             margin-bottom: 20px;
         }
 
-        .alert--error {
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.2);
-            color: var(--error);
-        }
-
-        .alert--success {
-            background: rgba(34,197,94,0.1);
-            border: 1px solid rgba(34,197,94,0.2);
-            color: var(--success);
-        }
+        .alert--error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--error); }
+        .alert--success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); color: var(--success); }
 
         .login-footer {
             text-align: center;
@@ -187,54 +278,77 @@
             font-size: 0.75rem;
             color: var(--text-3);
         }
+
+        @media (max-width: 768px) {
+            .login-layout { grid-template-columns: 1fr; }
+            .login-left { display: none; }
+            .login-right { min-height: 100vh; }
+        }
     </style>
 </head>
 <body>
 
-<div class="login-card">
-    <div class="login-logo">
-        ⚡ {{ config('app.name', 'ZephyrPHP') }}
-        <span class="badge">CMS</span>
+<div class="login-layout">
+    <!-- Left — Neon Grid -->
+    <div class="login-left" aria-hidden="true">
+        <div class="neon-line-v"></div>
+        <div class="neon-line-v"></div>
+        <div class="neon-line-v"></div>
+        <div class="neon-line-h"></div>
+        <div class="neon-line-h"></div>
+        <div class="neon-circle"></div>
+        <div class="neon-circle"></div>
+
+        <div class="left-content">
+            <div class="left-brand">⚡</div>
+            <h1 class="left-title">{{ config('app.name', 'ZephyrPHP') }}</h1>
+            <p class="left-desc">Visual page builder, theme customizer, and AI content tools — all from one admin panel.</p>
+        </div>
     </div>
 
-    <h2 class="login-title">Welcome back</h2>
-    <p class="login-subtitle">Sign in to your account</p>
+    <!-- Right — Login Form -->
+    <main class="login-right">
+        <div class="login-form-wrap">
+            <h2 class="login-title">Welcome back</h2>
+            <p class="login-subtitle">Sign in to continue</p>
 
-    {% if flash('error') %}
-        <div class="alert alert--error">{{ flash('error') }}</div>
-    {% endif %}
-    {% if flash('success') %}
-        <div class="alert alert--success">{{ flash('success') }}</div>
-    {% endif %}
-
-    <form method="POST" action="/zephyrphp/auth/login">
-        {{ csrf_field() | raw }}
-
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email"
-                   class="form-control{% if flash('errors').email is defined %} is-invalid{% endif %}"
-                   value="{{ flash('_old_input').email ?? '' }}"
-                   placeholder="you@example.com" required autofocus>
-            {% if flash('errors').email is defined %}
-                <div class="invalid-feedback">{{ flash('errors').email }}</div>
+            {% if flash('error') %}
+                <div class="alert alert--error">{{ flash('error') }}</div>
             {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password"
-                   class="form-control{% if flash('errors').password is defined %} is-invalid{% endif %}"
-                   placeholder="Enter your password" required>
-            {% if flash('errors').password is defined %}
-                <div class="invalid-feedback">{{ flash('errors').password }}</div>
+            {% if flash('success') %}
+                <div class="alert alert--success">{{ flash('success') }}</div>
             {% endif %}
+
+            <form method="POST" action="/zephyrphp/auth/login">
+                {{ csrf_field() | raw }}
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email"
+                           class="form-control{% if flash('errors').email is defined %} is-invalid{% endif %}"
+                           value="{{ flash('_old_input').email ?? '' }}"
+                           placeholder="you@example.com" required autofocus>
+                    {% if flash('errors').email is defined %}
+                        <div class="invalid-feedback">{{ flash('errors').email }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password"
+                           class="form-control{% if flash('errors').password is defined %} is-invalid{% endif %}"
+                           placeholder="Enter your password" required>
+                    {% if flash('errors').password is defined %}
+                        <div class="invalid-feedback">{{ flash('errors').password }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-submit">Sign In</button>
+            </form>
+
+            <p class="login-footer">&copy; {{ "now"|date("Y") }} {{ config('app.name', 'ZephyrPHP') }}</p>
         </div>
-
-        <button type="submit" class="btn-submit">Sign In</button>
-    </form>
-
-    <p class="login-footer">&copy; {{ "now"|date("Y") }} {{ config('app.name', 'ZephyrPHP') }}</p>
+    </main>
 </div>
 
 </body>
