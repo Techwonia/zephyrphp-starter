@@ -21,7 +21,7 @@ if (!file_exists(BASE_PATH . '/storage/.installed')) {
     Route::post('/setup/complete', [SetupController::class, 'complete']);
 }
 
-// Guest routes (redirect to /cms if already authenticated)
+// Auth routes
 Route::get('/login', [LoginController::class, 'showLoginForm'], [GuestMiddleware::class]);
 Route::post('/login', [LoginController::class, 'login'], [GuestMiddleware::class]);
 // Auth routes
