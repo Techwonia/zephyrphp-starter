@@ -223,10 +223,9 @@ class SetupController extends Controller
                 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             }
 
-            // ── Step 4: Check for existing tables and warn user ──
-            $confirmed = $data['confirm_existing'] ?? false;
+            // ── Step 4: Check for existing tables — warn and drop on confirm ──
+            $confirmed = !empty($data['confirm_existing']);
 
-            // Detect existing tables in the database
             $driverName = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
             $existingTables = [];
             if ($driverName === 'mysql') {
@@ -240,21 +239,27 @@ class SetupController extends Controller
                 $existingTables = $stmt->fetchAll(\PDO::FETCH_COLUMN);
             }
 
-            // If there are existing tables that aren't ours, warn the user
-            $ourTables = ['users', 'roles', 'role_user', 'cms_themes', 'cms_collections', 'cms_fields', 'cms_media'];
-            $foreignTables = array_diff($existingTables, $ourTables);
-
-            if (!empty($foreignTables) && !$confirmed) {
+            if (!empty($existingTables) && !$confirmed) {
                 echo json_encode([
                     'success' => false,
                     'has_tables' => true,
-                    'existing_tables' => array_values($foreignTables),
-                    'error' => 'This database already has ' . count($foreignTables) . ' existing table(s): ' . implode(', ', array_slice($foreignTables, 0, 5)) . (count($foreignTables) > 5 ? '...' : '') . '. ZephyrPHP will add its own tables without touching existing ones. Continue?',
+                    'table_count' => count($existingTables),
+                    'error' => 'This database has ' . count($existingTables) . ' existing table(s). All data will be lost and tables will be recreated fresh. Continue?',
                 ]);
                 exit;
             }
 
-            // ── Step 5: Create missing tables (CREATE TABLE IF NOT EXISTS — safe for existing data) ──
+            // If confirmed, drop ALL existing tables first for a clean install
+            if (!empty($existingTables) && $confirmed) {
+                $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
+                foreach ($existingTables as $table) {
+                    $quoted = $this->quoteIdentifier($pdo, $table);
+                    $pdo->exec("DROP TABLE IF EXISTS {$quoted}");
+                }
+                $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+            }
+
+            // ── Step 5: Create fresh tables ──
             $results = [];
 
             $this->createTable($pdo, 'users', "

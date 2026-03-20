@@ -659,8 +659,8 @@
             } else if (result.has_tables) {
                 btn.innerHTML = origHtml;
                 btn.disabled = false;
-                showAlert(2, 'info', result.error);
-                btn.innerHTML = 'Yes, Continue Anyway <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+                showAlert(2, 'error', result.error);
+                btn.innerHTML = 'Yes, Drop All &amp; Recreate <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
                 btn.onclick = async function() {
                     hideAlert(2);
                     btn.disabled = true;
