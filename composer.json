@@ -37,9 +37,6 @@
         "zephyrphp/authorization": "^0.4",
         "zephyrphp/cms": "^0.4"
     },
-    "require-dev": {
-        "phpunit/phpunit": "^11.5"
-    },
     "minimum-stability": "stable",
     "prefer-stable": true,
     "scripts": {
@@ -47,8 +44,7 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "ZephyrPHP\\Console\\Installer::postCreateProject"
         ],
-        "serve": "php craftsman serve",
-        "test": "phpunit"
+        "serve": "php craftsman serve"
     },
     "config": {
         "optimize-autoloader": true,
