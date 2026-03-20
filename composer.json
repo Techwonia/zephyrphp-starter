@@ -31,16 +31,16 @@
     },
     "require": {
         "php": ">=8.2",
-        "zephyrphp/framework": "dev-main",
-        "zephyrphp/database": "dev-main",
-        "zephyrphp/auth": "dev-main",
-        "zephyrphp/authorization": "dev-main",
-        "zephyrphp/cms": "dev-main"
+        "zephyrphp/framework": "^0.4",
+        "zephyrphp/database": "^0.4",
+        "zephyrphp/auth": "^0.4",
+        "zephyrphp/authorization": "^0.4",
+        "zephyrphp/cms": "^0.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "scripts": {
         "post-create-project-cmd": [
