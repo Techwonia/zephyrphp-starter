@@ -1,8 +1,8 @@
 # ZephyrPHP Starter
 
-Create a new ZephyrPHP CMS website.
+Create a new [ZephyrPHP](https://zephyrphp.com) CMS website.
 
-## Installation
+## Quick Start
 
 ```bash
 composer create-project zephyrphp/starter mysite
@@ -10,36 +10,18 @@ cd mysite
 php craftsman serve
 ```
 
-Open `http://localhost:8000` — the setup wizard will guide you through database configuration and admin account creation.
+Open `http://localhost:8000` — the setup wizard handles everything.
 
 ## What's Included
 
-- **CMS Admin Panel** — Visual page builder, theme customizer, media library
-- **Content Collections** — Create any content type with custom fields
-- **User Management** — Role-based permissions
-- **AI Content Tools** — Generate pages with AI (Gemini, Claude, OpenAI, etc.)
-- **Plugin System** — Extend with hooks and filters
-- **Analytics** — Built-in privacy-safe page tracking
-
-## Directory Structure
-
-```
-mysite/
-├── app/
-│   ├── Controllers/Auth/    # Login controller
-│   ├── Models/              # User & Role models
-│   └── Setup/               # Setup wizard
-├── config/
-│   ├── app.php              # App name, env, timezone
-│   └── ai.php               # AI provider config
-├── pages/
-│   ├── auth/                # Login page
-│   ├── setup/               # Setup wizard
-│   └── themes/hello/        # Default theme
-├── public/                  # Web root
-├── routes/web.php           # Route definitions
-└── storage/                 # Logs, cache, uploads
-```
+- Visual page builder & theme customizer
+- Content collections with custom fields
+- User management with role-based permissions
+- AI content tools (Gemini, Claude, OpenAI, Groq, Mistral)
+- Plugin system with hooks & filters
+- Built-in analytics
+- Media library
+- REST API
 
 ## Documentation
 
@@ -47,4 +29,4 @@ mysite/
 
 ## License
 
-MIT License
+MIT
