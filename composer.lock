@@ -2899,16 +2899,16 @@
         },
         {
             "name": "zephyrphp/auth",
-            "version": "v0.4.1",
+            "version": "v0.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-auth.git",
-                "reference": "21289f8005c7fa4c0258b0736c38f4cc4e46a5fd"
+                "reference": "3413ad3b8655c0143e884eaf44d0406c1aa7428f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Techwonia/zephyrphp-auth/zipball/21289f8005c7fa4c0258b0736c38f4cc4e46a5fd",
-                "reference": "21289f8005c7fa4c0258b0736c38f4cc4e46a5fd",
+                "url": "https://api.github.com/repos/Techwonia/zephyrphp-auth/zipball/3413ad3b8655c0143e884eaf44d0406c1aa7428f",
+                "reference": "3413ad3b8655c0143e884eaf44d0406c1aa7428f",
                 "shasum": ""
             },
             "require": {
@@ -2937,13 +2937,13 @@
             "description": "Authentication module for ZephyrPHP - Session and JWT authentication",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-auth/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-auth/tree/v0.4.1"
+                "source": "https://github.com/Techwonia/zephyrphp-auth/tree/v0.4.4"
             },
-            "time": "2026-03-20T12:41:08+00:00"
+            "time": "2026-03-20T15:33:29+00:00"
         },
         {
             "name": "zephyrphp/authorization",
-            "version": "v0.4.1",
+            "version": "v0.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-authorization.git",
@@ -2981,13 +2981,13 @@
             "description": "Authorization module for ZephyrPHP - Gates and Policies",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-authorization/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-authorization/tree/v0.4.1"
+                "source": "https://github.com/Techwonia/zephyrphp-authorization/tree/v0.4.4"
             },
             "time": "2026-03-20T12:41:11+00:00"
         },
         {
             "name": "zephyrphp/cache",
-            "version": "v0.4.1",
+            "version": "v0.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-cache.git",
@@ -3026,13 +3026,13 @@
             "description": "Cache module for ZephyrPHP - Multiple cache drivers support",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-cache/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-cache/tree/v0.4.1"
+                "source": "https://github.com/Techwonia/zephyrphp-cache/tree/v0.4.4"
             },
             "time": "2026-03-20T12:41:13+00:00"
         },
         {
             "name": "zephyrphp/cms",
-            "version": "v0.4.3",
+            "version": "v0.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-cms.git",
@@ -3083,13 +3083,13 @@
             "description": "CMS Builder module for ZephyrPHP - Dynamic content management with GUI",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-cms/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-cms/tree/v0.4.3"
+                "source": "https://github.com/Techwonia/zephyrphp-cms/tree/v0.4.4"
             },
             "time": "2026-03-20T15:25:17+00:00"
         },
         {
             "name": "zephyrphp/database",
-            "version": "v0.4.1",
+            "version": "v0.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-database.git",
@@ -3127,13 +3127,13 @@
             "description": "Database module for ZephyrPHP - Doctrine ORM integration",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-database/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-database/tree/v0.4.1"
+                "source": "https://github.com/Techwonia/zephyrphp-database/tree/v0.4.4"
             },
             "time": "2026-03-20T12:41:16+00:00"
         },
         {
             "name": "zephyrphp/framework",
-            "version": "v0.4.3",
+            "version": "v0.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-framework.git",
