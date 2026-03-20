@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c7a5bcf0e331afc2e6f8c3b1b7eabd5",
+    "content-hash": "e44a596676e3d1de00eb4cc888ab859b",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -1086,6 +1086,129 @@
                 "source": "https://github.com/laravel/serializable-closure"
             },
             "time": "2026-02-20T19:59:49+00:00"
+        },
+        {
+            "name": "matthiasmullie/minify",
+            "version": "1.3.75",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matthiasmullie/minify.git",
+                "reference": "76ba4a5f555fd7bf4aa408af608e991569076671"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matthiasmullie/minify/zipball/76ba4a5f555fd7bf4aa408af608e991569076671",
+                "reference": "76ba4a5f555fd7bf4aa408af608e991569076671",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcre": "*",
+                "matthiasmullie/path-converter": "~1.1",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": ">=2.0",
+                "matthiasmullie/scrapbook": ">=1.3",
+                "phpunit/phpunit": ">=4.8"
+            },
+            "suggest": {
+                "psr/cache-implementation": "Cache implementation to use with Minify::cache"
+            },
+            "bin": [
+                "bin/minifycss",
+                "bin/minifyjs"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MatthiasMullie\\Minify\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthias Mullie",
+                    "email": "minify@mullie.eu",
+                    "homepage": "https://www.mullie.eu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "CSS & JavaScript minifier, in PHP. Removes whitespace, strips comments, combines files (incl. @import statements and small assets in CSS files), and optimizes/shortens a few common programming patterns.",
+            "homepage": "https://github.com/matthiasmullie/minify",
+            "keywords": [
+                "JS",
+                "css",
+                "javascript",
+                "minifier",
+                "minify"
+            ],
+            "support": {
+                "issues": "https://github.com/matthiasmullie/minify/issues",
+                "source": "https://github.com/matthiasmullie/minify/tree/1.3.75"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/matthiasmullie",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-06-25T09:56:19+00:00"
+        },
+        {
+            "name": "matthiasmullie/path-converter",
+            "version": "1.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matthiasmullie/path-converter.git",
+                "reference": "e7d13b2c7e2f2268e1424aaed02085518afa02d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matthiasmullie/path-converter/zipball/e7d13b2c7e2f2268e1424aaed02085518afa02d9",
+                "reference": "e7d13b2c7e2f2268e1424aaed02085518afa02d9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcre": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MatthiasMullie\\PathConverter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthias Mullie",
+                    "email": "pathconverter@mullie.eu",
+                    "homepage": "http://www.mullie.eu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Relative path converter",
+            "homepage": "http://github.com/matthiasmullie/path-converter",
+            "keywords": [
+                "converter",
+                "path",
+                "paths",
+                "relative"
+            ],
+            "support": {
+                "issues": "https://github.com/matthiasmullie/path-converter/issues",
+                "source": "https://github.com/matthiasmullie/path-converter/tree/1.1.3"
+            },
+            "time": "2019-02-05T23:41:09+00:00"
         },
         {
             "name": "php-di/invoker",
@@ -2612,16 +2735,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v3.23.0",
+            "version": "v3.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "a64dc5d2cc7d6cafb9347f6cd802d0d06d0351c9"
+                "reference": "a6769aefb305efef849dc25c9fd1653358c148f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a64dc5d2cc7d6cafb9347f6cd802d0d06d0351c9",
-                "reference": "a64dc5d2cc7d6cafb9347f6cd802d0d06d0351c9",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a6769aefb305efef849dc25c9fd1653358c148f0",
+                "reference": "a6769aefb305efef849dc25c9fd1653358c148f0",
                 "shasum": ""
             },
             "require": {
@@ -2631,7 +2754,8 @@
                 "symfony/polyfill-mbstring": "^1.3"
             },
             "require-dev": {
-                "phpstan/phpstan": "^2.0",
+                "php-cs-fixer/shim": "^3.0@stable",
+                "phpstan/phpstan": "^2.0@stable",
                 "psr/container": "^1.0|^2.0",
                 "symfony/phpunit-bridge": "^5.4.9|^6.4|^7.0"
             },
@@ -2675,7 +2799,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.23.0"
+                "source": "https://github.com/twigphp/Twig/tree/v3.24.0"
             },
             "funding": [
                 {
@@ -2687,7 +2811,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-23T21:00:41+00:00"
+            "time": "2026-03-17T21:31:11+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -2775,23 +2899,22 @@
         },
         {
             "name": "zephyrphp/auth",
-            "version": "dev-main",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-auth.git",
-                "reference": "4e31db0ff864360bf6827d4f8008093f02631c2a"
+                "reference": "21289f8005c7fa4c0258b0736c38f4cc4e46a5fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Techwonia/zephyrphp-auth/zipball/4e31db0ff864360bf6827d4f8008093f02631c2a",
-                "reference": "4e31db0ff864360bf6827d4f8008093f02631c2a",
+                "url": "https://api.github.com/repos/Techwonia/zephyrphp-auth/zipball/21289f8005c7fa4c0258b0736c38f4cc4e46a5fd",
+                "reference": "21289f8005c7fa4c0258b0736c38f4cc4e46a5fd",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1",
-                "zephyrphp/framework": "^0.1|dev-main"
+                "php": ">=8.2",
+                "zephyrphp/framework": "^0.4"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "zephyr": {
@@ -2814,30 +2937,29 @@
             "description": "Authentication module for ZephyrPHP - Session and JWT authentication",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-auth/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-auth/tree/main"
+                "source": "https://github.com/Techwonia/zephyrphp-auth/tree/v0.4.1"
             },
-            "time": "2026-03-04T20:17:59+00:00"
+            "time": "2026-03-20T12:41:08+00:00"
         },
         {
             "name": "zephyrphp/authorization",
-            "version": "dev-main",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-authorization.git",
-                "reference": "8dc172a1991bba42c07a8f62997145a32fa55601"
+                "reference": "9d088a478b70f407cb32b35435695c140ab0040e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Techwonia/zephyrphp-authorization/zipball/8dc172a1991bba42c07a8f62997145a32fa55601",
-                "reference": "8dc172a1991bba42c07a8f62997145a32fa55601",
+                "url": "https://api.github.com/repos/Techwonia/zephyrphp-authorization/zipball/9d088a478b70f407cb32b35435695c140ab0040e",
+                "reference": "9d088a478b70f407cb32b35435695c140ab0040e",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1",
-                "zephyrphp/auth": "^0.1|dev-main",
-                "zephyrphp/framework": "^0.1|dev-main"
+                "php": ">=8.2",
+                "zephyrphp/auth": "^0.4",
+                "zephyrphp/framework": "^0.4"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "zephyr": {
@@ -2859,32 +2981,78 @@
             "description": "Authorization module for ZephyrPHP - Gates and Policies",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-authorization/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-authorization/tree/main"
+                "source": "https://github.com/Techwonia/zephyrphp-authorization/tree/v0.4.1"
             },
-            "time": "2026-03-04T19:41:55+00:00"
+            "time": "2026-03-20T12:41:11+00:00"
         },
         {
-            "name": "zephyrphp/cms",
-            "version": "dev-main",
+            "name": "zephyrphp/cache",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Techwonia/zephyrphp-cms.git",
-                "reference": "1d0712e15cb02ff01cb738cb748ab34a8d4b43bd"
+                "url": "https://github.com/Techwonia/zephyrphp-cache.git",
+                "reference": "5d0fc4da47242ddd81dbfb30731ad93c096f6495"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Techwonia/zephyrphp-cms/zipball/1d0712e15cb02ff01cb738cb748ab34a8d4b43bd",
-                "reference": "1d0712e15cb02ff01cb738cb748ab34a8d4b43bd",
+                "url": "https://api.github.com/repos/Techwonia/zephyrphp-cache/zipball/5d0fc4da47242ddd81dbfb30731ad93c096f6495",
+                "reference": "5d0fc4da47242ddd81dbfb30731ad93c096f6495",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1",
-                "zephyrphp/auth": "^0.1|dev-main",
-                "zephyrphp/authorization": "^0.1|dev-main",
-                "zephyrphp/database": "^0.1|dev-main",
-                "zephyrphp/framework": "^0.1|dev-main"
+                "php": ">=8.2",
+                "zephyrphp/framework": "^0.4"
             },
-            "default-branch": true,
+            "suggest": {
+                "ext-apcu": "Required for APCu cache driver",
+                "ext-redis": "Required for Redis cache driver"
+            },
+            "type": "library",
+            "extra": {
+                "zephyr": {
+                    "config": "config/cache.php",
+                    "module": "cache"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ZephyrPHP\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Cache module for ZephyrPHP - Multiple cache drivers support",
+            "support": {
+                "issues": "https://github.com/Techwonia/zephyrphp-cache/issues",
+                "source": "https://github.com/Techwonia/zephyrphp-cache/tree/v0.4.1"
+            },
+            "time": "2026-03-20T12:41:13+00:00"
+        },
+        {
+            "name": "zephyrphp/cms",
+            "version": "v0.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Techwonia/zephyrphp-cms.git",
+                "reference": "2faf13b15e091d26e78ae7084aefad22a7cd9ecb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Techwonia/zephyrphp-cms/zipball/2faf13b15e091d26e78ae7084aefad22a7cd9ecb",
+                "reference": "2faf13b15e091d26e78ae7084aefad22a7cd9ecb",
+                "shasum": ""
+            },
+            "require": {
+                "matthiasmullie/minify": "^1.3",
+                "php": ">=8.2",
+                "zephyrphp/auth": "^0.4",
+                "zephyrphp/authorization": "^0.4",
+                "zephyrphp/cache": "^0.4",
+                "zephyrphp/database": "^0.4",
+                "zephyrphp/framework": "^0.4"
+            },
             "type": "library",
             "extra": {
                 "zephyr": {
@@ -2915,32 +3083,31 @@
             "description": "CMS Builder module for ZephyrPHP - Dynamic content management with GUI",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-cms/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-cms/tree/main"
+                "source": "https://github.com/Techwonia/zephyrphp-cms/tree/v0.4.1"
             },
-            "time": "2026-03-11T17:09:57+00:00"
+            "time": "2026-03-20T12:41:47+00:00"
         },
         {
             "name": "zephyrphp/database",
-            "version": "dev-main",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-database.git",
-                "reference": "c50a26579c811a7feffa0fbb43b18345c5fddc7a"
+                "reference": "8d897e0d0d134943241e4a3144986817cb183424"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Techwonia/zephyrphp-database/zipball/c50a26579c811a7feffa0fbb43b18345c5fddc7a",
-                "reference": "c50a26579c811a7feffa0fbb43b18345c5fddc7a",
+                "url": "https://api.github.com/repos/Techwonia/zephyrphp-database/zipball/8d897e0d0d134943241e4a3144986817cb183424",
+                "reference": "8d897e0d0d134943241e4a3144986817cb183424",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "^3.6",
                 "doctrine/orm": "^2.14",
-                "php": "^8.1",
+                "php": ">=8.2",
                 "symfony/cache": "^6.0|^7.0",
-                "zephyrphp/framework": "^0.1|dev-main"
+                "zephyrphp/framework": "^0.4"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "zephyr": {
@@ -2960,22 +3127,22 @@
             "description": "Database module for ZephyrPHP - Doctrine ORM integration",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-database/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-database/tree/main"
+                "source": "https://github.com/Techwonia/zephyrphp-database/tree/v0.4.1"
             },
-            "time": "2026-03-04T21:50:59+00:00"
+            "time": "2026-03-20T12:41:16+00:00"
         },
         {
             "name": "zephyrphp/framework",
-            "version": "dev-main",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-framework.git",
-                "reference": "7082e6d3a96320426e962f0d78b65db2254fbc80"
+                "reference": "7222c5e7accc0fd1070a09d2938c93e802a2e058"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Techwonia/zephyrphp-framework/zipball/7082e6d3a96320426e962f0d78b65db2254fbc80",
-                "reference": "7082e6d3a96320426e962f0d78b65db2254fbc80",
+                "url": "https://api.github.com/repos/Techwonia/zephyrphp-framework/zipball/7222c5e7accc0fd1070a09d2938c93e802a2e058",
+                "reference": "7222c5e7accc0fd1070a09d2938c93e802a2e058",
                 "shasum": ""
             },
             "require": {
@@ -2990,7 +3157,6 @@
                 "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^11.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -3011,7 +3177,7 @@
                     "homepage": "https://techwonia.com"
                 }
             ],
-            "description": "ZephyrPHP - A lightweight, fast & secure PHP framework. Light as a breeze, fast as the wind.",
+            "description": "ZephyrPHP - An open-source, GUI-first CMS platform for building modern websites.",
             "homepage": "https://github.com/Techwonia/zephyrphp-framework",
             "keywords": [
                 "fast",
@@ -3028,7 +3194,7 @@
                 "issues": "https://github.com/Techwonia/zephyrphp-framework/issues",
                 "source": "https://github.com/Techwonia/zephyrphp-framework"
             },
-            "time": "2026-03-11T16:50:46+00:00"
+            "time": "2026-03-20T10:44:11+00:00"
         }
     ],
     "packages-dev": [
@@ -4815,14 +4981,8 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
-    "stability-flags": {
-        "zephyrphp/auth": 20,
-        "zephyrphp/authorization": 20,
-        "zephyrphp/cms": 20,
-        "zephyrphp/database": 20,
-        "zephyrphp/framework": 20
-    },
+    "minimum-stability": "stable",
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
