@@ -54,7 +54,7 @@ class LoginController extends Controller
             // Role-based default redirect
             $user = Auth::user();
             if ($user && method_exists($user, 'hasRole') && $user->hasRole('admin')) {
-                $this->redirect('/cms');
+                $this->redirect('/' . ltrim($_ENV['ADMIN_PATH'] ?? 'admin', '/'));
             } else {
                 $this->redirect($_ENV['AUTH_HOME'] ?? '/');
             }

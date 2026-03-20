@@ -14,7 +14,7 @@
                         "heading": "Hello.",
                         "subheading": "Your site is live. Sign in to start building.",
                         "button_text": "Go to Dashboard",
-                        "button_url": "/cms",
+                        "button_url": "/admin",
                         "bg_color": "#ffffff",
                         "heading_color": "#111111",
                         "subheading_color": "#666666",

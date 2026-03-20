@@ -491,7 +491,7 @@ class SetupController extends Controller
                 mkdir($uploadsDir, 0755, true);
             }
 
-            echo json_encode(['success' => true, 'redirect' => '/cms']);
+            echo json_encode(['success' => true, 'redirect' => '/admin']);
         } catch (\Throwable $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);

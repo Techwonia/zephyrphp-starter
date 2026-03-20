@@ -24,7 +24,7 @@
 </head>
 <body>
     {% if is_theme_preview is defined and is_theme_preview %}
-    <div class="preview-banner">Preview: {{ preview_theme_slug }} &mdash; <a href="/cms/themes">Back</a></div>
+    <div class="preview-banner">Preview: {{ preview_theme_slug }} &mdash; <a href="{{ admin_url('themes') }}">Back</a></div>
     {% endif %}
 
     {% include "@theme/snippets/header.twig" %}
