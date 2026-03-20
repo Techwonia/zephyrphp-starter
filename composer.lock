@@ -3032,16 +3032,16 @@
         },
         {
             "name": "zephyrphp/cms",
-            "version": "v0.4.1",
+            "version": "v0.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-cms.git",
-                "reference": "2faf13b15e091d26e78ae7084aefad22a7cd9ecb"
+                "reference": "ec5d49c192dc705096d1b5329c23c3b5bd5c9b3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Techwonia/zephyrphp-cms/zipball/2faf13b15e091d26e78ae7084aefad22a7cd9ecb",
-                "reference": "2faf13b15e091d26e78ae7084aefad22a7cd9ecb",
+                "url": "https://api.github.com/repos/Techwonia/zephyrphp-cms/zipball/ec5d49c192dc705096d1b5329c23c3b5bd5c9b3a",
+                "reference": "ec5d49c192dc705096d1b5329c23c3b5bd5c9b3a",
                 "shasum": ""
             },
             "require": {
@@ -3083,9 +3083,9 @@
             "description": "CMS Builder module for ZephyrPHP - Dynamic content management with GUI",
             "support": {
                 "issues": "https://github.com/Techwonia/zephyrphp-cms/issues",
-                "source": "https://github.com/Techwonia/zephyrphp-cms/tree/v0.4.1"
+                "source": "https://github.com/Techwonia/zephyrphp-cms/tree/v0.4.3"
             },
-            "time": "2026-03-20T12:41:47+00:00"
+            "time": "2026-03-20T15:25:17+00:00"
         },
         {
             "name": "zephyrphp/database",
@@ -3133,16 +3133,16 @@
         },
         {
             "name": "zephyrphp/framework",
-            "version": "v0.4.1",
+            "version": "v0.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Techwonia/zephyrphp-framework.git",
-                "reference": "7222c5e7accc0fd1070a09d2938c93e802a2e058"
+                "reference": "63983f3ea4125cb95db19ed586cc5abe83bf2396"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Techwonia/zephyrphp-framework/zipball/7222c5e7accc0fd1070a09d2938c93e802a2e058",
-                "reference": "7222c5e7accc0fd1070a09d2938c93e802a2e058",
+                "url": "https://api.github.com/repos/Techwonia/zephyrphp-framework/zipball/63983f3ea4125cb95db19ed586cc5abe83bf2396",
+                "reference": "63983f3ea4125cb95db19ed586cc5abe83bf2396",
                 "shasum": ""
             },
             "require": {
@@ -3194,7 +3194,7 @@
                 "issues": "https://github.com/Techwonia/zephyrphp-framework/issues",
                 "source": "https://github.com/Techwonia/zephyrphp-framework"
             },
-            "time": "2026-03-20T10:44:11+00:00"
+            "time": "2026-03-20T15:24:19+00:00"
         }
     ],
     "packages-dev": [
