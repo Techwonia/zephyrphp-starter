@@ -5,199 +5,222 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Setup — ZephyrPHP</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style nonce="{{ csp_nonce() }}">
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg-app: #F1F1F1;
-            --bg-surface: #FFFFFF;
-            --bg-surface-hover: #F7F7F7;
-            --text-primary: #303030;
-            --text-secondary: #616161;
-            --text-disabled: #B5B5B5;
-            --border: #E3E3E3;
-            --border-hover: #CCCCCC;
-            --color-primary: #008060;
-            --color-primary-hover: #006e52;
-            --color-success: #047B5D;
-            --color-critical: #D72C0D;
-            --color-warning: #FFB800;
-            --color-info: #2C6ECB;
-            --shadow-card: 0 1px 0 rgba(26,26,26,0.07), 0 1px 3px rgba(26,26,26,0.1);
-            --shadow-lg: 0 4px 16px rgba(26,26,26,0.12);
+            --bg: #0a0a0a;
+            --bg-card: #111111;
+            --bg-input: #1a1a1a;
+            --border: rgba(255,255,255,0.08);
+            --border-focus: rgba(6,182,212,0.5);
+            --text: #ededed;
+            --text-2: #888888;
+            --text-3: #555555;
+            --primary: #06b6d4;
+            --primary-hover: #22d3ee;
+            --success: #22c55e;
+            --error: #ef4444;
+            --info: #3b82f6;
             --radius: 12px;
             --radius-sm: 8px;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         body {
             font-family: var(--font);
-            background: var(--bg-app);
-            color: var(--text-primary);
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.5;
             min-height: 100vh;
+        }
+
+        /* ── Split Layout ── */
+        .setup-layout {
+            display: grid;
+            grid-template-columns: 2fr 5fr;
+            min-height: 100vh;
+        }
+
+        /* ── Left Panel — Info ── */
+        .setup-sidebar {
+            position: relative;
+            padding: 48px 32px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-
-        .setup-container {
-            width: 100%;
-            max-width: 640px;
-        }
-
-        .setup-logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .setup-logo h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .setup-logo p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-top: 4px;
-        }
-
-        /* Progress Bar */
-        .progress-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-            margin-bottom: 32px;
-        }
-
-        .progress-step {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .step-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border: 2px solid var(--border);
-            color: var(--text-disabled);
-            background: var(--bg-surface);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .step-circle.active {
-            border-color: var(--color-primary);
-            color: var(--color-primary);
-            background: #e6f4ef;
-        }
-
-        .step-circle.done {
-            border-color: var(--color-primary);
-            background: var(--color-primary);
-            color: white;
-        }
-
-        .step-label {
-            font-size: 0.75rem;
-            color: var(--text-disabled);
-            font-weight: 500;
-            display: none;
-        }
-
-        .step-line {
-            width: 40px;
-            height: 2px;
-            background: var(--border);
-            margin: 0 4px;
-            transition: background 0.3s ease;
-        }
-
-        .step-line.done {
-            background: var(--color-primary);
-        }
-
-        /* Card */
-        .setup-card {
-            background: var(--bg-surface);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
+            flex-direction: column;
+            justify-content: space-between;
+            border-right: 1px solid var(--border);
             overflow: hidden;
         }
 
-        .card-header {
-            padding: 24px 32px 0;
+        /* Grid pattern background */
+        .setup-sidebar::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.5;
         }
 
-        .card-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 4px;
+        /* Gradient overlay */
+        .setup-sidebar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(6,182,212,0.08), transparent 70%);
         }
 
-        .card-header p {
-            color: var(--text-secondary);
+        .sidebar-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-tagline {
+            color: var(--text-2);
             font-size: 0.875rem;
+            margin-bottom: 48px;
         }
 
-        .card-body {
-            padding: 24px 32px;
-        }
-
-        .card-footer {
-            padding: 16px 32px 24px;
+        /* Step indicators in sidebar */
+        .sidebar-steps {
+            list-style: none;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .sidebar-step {
+            display: flex;
             align-items: center;
             gap: 12px;
+            padding: 14px 0;
+            font-size: 0.875rem;
+            color: var(--text-3);
+            transition: color 0.2s;
         }
 
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 20px;
+        .sidebar-step.active { color: var(--text); }
+        .sidebar-step.done { color: var(--primary); }
+
+        .step-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            transition: all 0.2s;
         }
+
+        .sidebar-step.active .step-dot {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(6,182,212,0.1);
+        }
+
+        .sidebar-step.done .step-dot {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #000;
+        }
+
+        .step-connector {
+            width: 2px;
+            height: 20px;
+            background: var(--border);
+            margin-left: 13px;
+            transition: background 0.2s;
+        }
+
+        .step-connector.done { background: var(--primary); }
+
+        .sidebar-footer {
+            position: relative;
+            z-index: 1;
+            font-size: 0.75rem;
+            color: var(--text-3);
+        }
+
+        /* ── Right Panel — Form ── */
+        .setup-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px;
+        }
+
+        .setup-form-wrap {
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: -0.02em;
+        }
+
+        .form-subtitle {
+            color: var(--text-2);
+            font-size: 0.875rem;
+            margin-bottom: 32px;
+        }
+
+        /* ── Form Elements ── */
+        .form-group { margin-bottom: 20px; }
 
         .form-group label {
             display: block;
             font-size: 0.8125rem;
             font-weight: 500;
-            color: var(--text-primary);
+            color: var(--text-2);
             margin-bottom: 6px;
         }
 
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 10px 14px;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             font-size: 0.875rem;
             font-family: var(--font);
-            color: var(--text-primary);
-            background: var(--bg-surface);
+            color: var(--text);
+            background: var(--bg-input);
             transition: border-color 0.2s, box-shadow 0.2s;
             outline: none;
         }
 
         .form-group input:focus,
         .form-group select:focus {
-            border-color: var(--color-info);
-            box-shadow: 0 0 0 2px rgba(44, 110, 203, 0.15);
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 2px rgba(6,182,212,0.1);
         }
+
+        .form-group input::placeholder { color: var(--text-3); }
 
         .form-group .help-text {
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            color: var(--text-3);
             margin-top: 4px;
         }
 
@@ -207,7 +230,7 @@
             gap: 16px;
         }
 
-        /* Buttons */
+        /* ── Buttons ── */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -220,161 +243,72 @@
             font-family: var(--font);
             cursor: pointer;
             border: 1px solid transparent;
-            transition: all 0.15s ease;
+            transition: all 0.15s;
             text-decoration: none;
             line-height: 1;
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .btn-primary {
-            background: var(--color-primary);
-            color: white;
-            border-color: var(--color-primary);
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            font-weight: 600;
         }
 
-        .btn-primary:hover:not(:disabled) {
-            background: var(--color-primary-hover);
-        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
 
         .btn-secondary {
-            background: var(--bg-surface);
-            color: var(--text-primary);
+            background: transparent;
+            color: var(--text);
             border-color: var(--border);
         }
 
         .btn-secondary:hover:not(:disabled) {
-            background: var(--bg-surface-hover);
-            border-color: var(--border-hover);
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.15);
         }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--color-primary);
-            border-color: var(--border);
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
         }
 
-        .btn-outline:hover:not(:disabled) {
-            background: #e6f4ef;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.8125rem;
-        }
-
-        /* Alerts */
+        /* ── Alerts ── */
         .alert {
             padding: 12px 16px;
             border-radius: var(--radius-sm);
             font-size: 0.8125rem;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             display: none;
         }
 
         .alert.show { display: flex; align-items: center; gap: 8px; }
+        .alert-success { background: rgba(34,197,94,0.1); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+        .alert-error { background: rgba(239,68,68,0.1); color: var(--error); border: 1px solid rgba(239,68,68,0.2); }
+        .alert-info { background: rgba(59,130,246,0.1); color: var(--info); border: 1px solid rgba(59,130,246,0.2); }
 
-        .alert-success {
-            background: #e6f4ef;
-            color: var(--color-success);
-            border: 1px solid rgba(4, 123, 93, 0.2);
-        }
-
-        .alert-error {
-            background: #fef2f0;
-            color: var(--color-critical);
-            border: 1px solid rgba(215, 44, 13, 0.2);
-        }
-
-        .alert-info {
-            background: #eef4fb;
-            color: var(--color-info);
-            border: 1px solid rgba(44, 110, 203, 0.2);
-        }
-
-        /* Install Checklist */
-        .install-list {
-            list-style: none;
-        }
-
-        .install-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.875rem;
-        }
-
-        .install-item:last-child { border-bottom: none; }
-
-        .install-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            background: var(--bg-surface-hover);
-            color: var(--text-disabled);
-            font-size: 0.75rem;
-        }
-
-        .install-item.done .install-icon {
-            background: var(--color-primary);
-            color: white;
-        }
-
-        .install-item.error .install-icon {
-            background: var(--color-critical);
-            color: white;
-        }
-
-        .install-item .item-label {
-            flex: 1;
-        }
-
-        .install-item .item-status {
-            font-size: 0.75rem;
-            color: var(--text-disabled);
-        }
-
-        .install-item.done .item-status { color: var(--color-success); }
-        .install-item.error .item-status { color: var(--color-critical); }
-
-        /* Spinner */
+        /* ── Spinner ── */
         .spinner {
-            width: 18px;
-            height: 18px;
+            width: 18px; height: 18px;
             border: 2px solid var(--border);
-            border-top-color: var(--color-primary);
+            border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             display: inline-block;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Step Visibility */
-        .step-content { display: none; }
-        .step-content.active { display: block; }
-
-        /* Success Page */
-        .success-content {
-            text-align: center;
-            padding: 32px 0;
-        }
+        /* ── Success ── */
+        .success-content { text-align: center; padding: 32px 0; }
 
         .success-icon {
-            width: 80px;
-            height: 80px;
-            background: #e6f4ef;
+            width: 72px; height: 72px;
+            background: rgba(6,182,212,0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -382,91 +316,98 @@
             margin: 0 auto 24px;
         }
 
-        .success-icon svg {
-            width: 40px;
-            height: 40px;
-            color: var(--color-primary);
-        }
+        .success-icon svg { width: 36px; height: 36px; color: var(--primary); }
 
-        .success-content h2 {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-        }
+        .success-content h2 { font-size: 1.5rem; margin-bottom: 8px; }
+        .success-content p { color: var(--text-2); margin-bottom: 24px; }
 
-        .success-content p {
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-        }
+        .success-actions { display: flex; gap: 12px; justify-content: center; }
 
-        .success-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        /* DB Fields visibility */
+        /* ── DB Fields ── */
         .db-network-fields { display: block; }
         .db-sqlite-fields { display: none; }
 
-        /* Responsive */
-        @media (max-width: 640px) {
-            body { padding: 16px; }
-            .card-header, .card-body, .card-footer { padding-left: 20px; padding-right: 20px; }
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .setup-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .setup-sidebar {
+                padding: 24px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .sidebar-steps { flex-direction: row; gap: 12px; }
+            .step-connector { display: none; }
+            .sidebar-tagline { margin-bottom: 24px; }
+            .sidebar-footer { display: none; }
+
+            .setup-main { padding: 24px; }
             .form-row { grid-template-columns: 1fr; }
-            .step-line { width: 24px; }
         }
     </style>
 </head>
 <body>
 
-<div class="setup-container">
-    <div class="setup-logo">
-        <h1>ZephyrPHP</h1>
-        <p>Let's get your application set up</p>
-    </div>
+<div class="setup-layout">
+    <!-- Left Panel — Info & Steps -->
+    <aside class="setup-sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-logo">⚡ ZephyrPHP</div>
+            <p class="sidebar-tagline">Setup your CMS in minutes</p>
 
-    {% if writable_errors is not empty %}
-    <div class="alert alert-critical" style="background:#FFF4F4;border:1px solid var(--color-critical);border-radius:var(--radius-sm);padding:16px;margin-bottom:24px;">
-        <strong style="color:var(--color-critical);">Permission Issues Detected</strong>
-        <p style="margin:8px 0 0;color:var(--text-secondary);font-size:0.875rem;">The following must be resolved before setup can proceed:</p>
-        <ul style="margin:8px 0 0;padding-left:20px;color:var(--text-secondary);font-size:0.875rem;">
-            {% for error in writable_errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
+            <ul class="sidebar-steps">
+                <li class="sidebar-step active" data-sidebar="1">
+                    <span class="step-dot">1</span>
+                    Application
+                </li>
+                <div class="step-connector" data-conn="1"></div>
+                <li class="sidebar-step" data-sidebar="2">
+                    <span class="step-dot">2</span>
+                    Database
+                </li>
+                <div class="step-connector" data-conn="2"></div>
+                <li class="sidebar-step" data-sidebar="3">
+                    <span class="step-dot">3</span>
+                    Admin Account
+                </li>
+                <div class="step-connector" data-conn="3"></div>
+                <li class="sidebar-step" data-sidebar="4">
+                    <span class="step-dot">4</span>
+                    Complete
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            &copy; {{ "now"|date("Y") }} ZephyrPHP &middot; MIT License
+        </div>
+    </aside>
 
-    <!-- Progress Bar -->
-    <div class="progress-bar">
-        <div class="progress-step">
-            <div class="step-circle active" data-step="1">1</div>
-        </div>
-        <div class="step-line" data-line="1"></div>
-        <div class="progress-step">
-            <div class="step-circle" data-step="2">2</div>
-        </div>
-        <div class="step-line" data-line="2"></div>
-        <div class="progress-step">
-            <div class="step-circle" data-step="3">3</div>
-        </div>
-        <div class="step-line" data-line="3"></div>
-        <div class="progress-step">
-            <div class="step-circle" data-step="4">4</div>
-        </div>
-    </div>
+    <!-- Right Panel — Form -->
+    <main class="setup-main">
+        <div class="setup-form-wrap">
 
-    <div class="setup-card">
-        <!-- Step 1: App Settings -->
-        <div class="step-content active" data-step="1">
-            <div class="card-header">
-                <h2>Application Settings</h2>
-                <p>Configure your application's basic settings</p>
+            {% if writable_errors is not empty %}
+            <div class="alert alert-error show" style="margin-bottom:24px;">
+                <div>
+                    <strong>Permission Issues</strong><br>
+                    {% for error in writable_errors %}
+                        {{ error }}<br>
+                    {% endfor %}
+                </div>
             </div>
-            <div class="card-body">
+            {% endif %}
+
+            <!-- Step 1: App Settings -->
+            <div class="step-content active" data-step="1">
+                <h2 class="form-title">Application</h2>
+                <p class="form-subtitle">Name your site and set the environment</p>
+
                 <div id="alert-step1" class="alert"></div>
                 <div class="form-group">
-                    <label for="app_name">Application Name</label>
+                    <label for="app_name">Site Name</label>
                     <input type="text" id="app_name" value="{{ env.APP_NAME ?? 'ZephyrPHP' }}" placeholder="My Awesome Site">
                 </div>
                 <div class="form-row">
@@ -486,26 +427,23 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-footer">
+                    <div></div>
+                    <button class="btn btn-primary" id="btn-step1-next">
+                        Continue
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
             </div>
-            <div class="card-footer">
-                <div></div>
-                <button class="btn btn-primary" id="btn-step1-next">
-                    Continue
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-            </div>
-        </div>
 
-        <!-- Step 2: Database -->
-        <div class="step-content" data-step="2">
-            <div class="card-header">
-                <h2>Database Configuration</h2>
-                <p>Connect your application to a database</p>
-            </div>
-            <div class="card-body">
+            <!-- Step 2: Database -->
+            <div class="step-content" data-step="2">
+                <h2 class="form-title">Database</h2>
+                <p class="form-subtitle">Connect to your database — it will be tested and set up automatically</p>
+
                 <div id="alert-step2" class="alert"></div>
                 <div class="form-group">
-                    <label for="db_driver">Database Driver</label>
+                    <label for="db_driver">Driver</label>
                     <select id="db_driver">
                         <option value="pdo_mysql" {{ (env.DB_CONNECTION ?? 'pdo_mysql') == 'pdo_mysql' ? 'selected' : '' }}>MySQL / MariaDB</option>
                         <option value="pdo_pgsql" {{ (env.DB_CONNECTION ?? '') == 'pdo_pgsql' ? 'selected' : '' }}>PostgreSQL</option>
@@ -546,31 +484,23 @@
                         <div class="help-text">Relative to project root</div>
                     </div>
                 </div>
-                <div class="help-text" style="margin-top: 8px; color: var(--text-muted);">
-                    Connection will be tested automatically when you click Continue. If the database doesn't exist, it will be created.
+                <div class="form-footer">
+                    <button class="btn btn-secondary" id="btn-step2-back">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+                    <button class="btn btn-primary" id="btn-step2-next">
+                        Continue
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
                 </div>
             </div>
-            <div class="card-footer">
-                <button class="btn btn-secondary" id="btn-step2-back">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                    Back
-                </button>
-                <button class="btn btn-primary" id="btn-step2-next">
-                    Continue
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-            </div>
-        </div>
 
-        {# Step 3 removed — database setup is now handled in Step 2's "Continue" button #}
+            <!-- Step 3: Admin Account -->
+            <div class="step-content" data-step="3">
+                <h2 class="form-title">Admin Account</h2>
+                <p class="form-subtitle">Create your administrator account</p>
 
-        <!-- Step 3: Admin Account -->
-        <div class="step-content" data-step="3">
-            <div class="card-header">
-                <h2>Create Admin Account</h2>
-                <p>Set up your administrator account</p>
-            </div>
-            <div class="card-body">
                 <div id="alert-step3" class="alert"></div>
                 <div class="form-group">
                     <label for="admin_name">Full Name</label>
@@ -590,67 +520,63 @@
                         <input type="password" id="admin_password_confirm" placeholder="Repeat password" required>
                     </div>
                 </div>
+                <div class="form-footer">
+                    <button class="btn btn-secondary" id="btn-step3-back">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+                    <button class="btn btn-primary" id="btn-create-admin">
+                        Create Account
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
             </div>
-            <div class="card-footer">
-                <button class="btn btn-secondary" id="btn-step3-back">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                    Back
-                </button>
-                <button class="btn btn-primary" id="btn-create-admin">
-                    Create Account
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-            </div>
-        </div>
 
-        <!-- Step 4: Complete -->
-        <div class="step-content" data-step="4">
-            <div class="card-body">
+            <!-- Step 4: Complete -->
+            <div class="step-content" data-step="4">
                 <div class="success-content">
                     <div class="success-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                     </div>
                     <h2>You're all set!</h2>
-                    <p>Your ZephyrPHP application has been configured successfully.</p>
+                    <p>Your ZephyrPHP site is ready. Start building from the CMS dashboard.</p>
                     <div class="success-actions">
-                        <a href="/" class="btn btn-secondary">Visit Your Site</a>
-                        <a href="/cms" class="btn btn-primary">Go to CMS Dashboard</a>
+                        <a href="/" class="btn btn-secondary">Visit Site</a>
+                        <a href="/cms" class="btn btn-primary">Open CMS Dashboard</a>
                     </div>
                 </div>
             </div>
+
         </div>
-    </div>
+    </main>
 </div>
 
 <script nonce="{{ csp_nonce() }}">
     let currentStep = 1;
-    // Database step handles test+create+tables in one call
 
     function goToStep(step) {
-        // Hide all steps
         document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-        // Show target step
         document.querySelector(`.step-content[data-step="${step}"]`).classList.add('active');
 
-        // Update progress circles
-        document.querySelectorAll('.step-circle').forEach(circle => {
-            const s = parseInt(circle.dataset.step);
-            circle.classList.remove('active', 'done');
+        // Update sidebar steps
+        document.querySelectorAll('.sidebar-step').forEach(el => {
+            const s = parseInt(el.dataset.sidebar);
+            el.classList.remove('active', 'done');
             if (s < step) {
-                circle.classList.add('done');
-                circle.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+                el.classList.add('done');
+                el.querySelector('.step-dot').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
             } else if (s === step) {
-                circle.classList.add('active');
-                circle.textContent = s;
+                el.classList.add('active');
+                el.querySelector('.step-dot').textContent = s;
             } else {
-                circle.textContent = s;
+                el.querySelector('.step-dot').textContent = s;
             }
         });
 
-        // Update progress lines
-        document.querySelectorAll('.step-line').forEach(line => {
-            const l = parseInt(line.dataset.line);
-            line.classList.toggle('done', l < step);
+        // Update connectors
+        document.querySelectorAll('.step-connector').forEach(el => {
+            const c = parseInt(el.dataset.conn);
+            el.classList.toggle('done', c < step);
         });
 
         currentStep = step;
@@ -664,25 +590,19 @@
 
     function hideAlert(stepId) {
         const alert = document.getElementById(`alert-step${stepId}`);
-        if (alert) {
-            alert.className = 'alert';
-            alert.textContent = '';
-        }
+        if (alert) { alert.className = 'alert'; alert.textContent = ''; }
     }
 
     async function apiCall(url, data) {
         const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token }}'
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token }}' },
             body: JSON.stringify(data)
         });
         return response.json();
     }
 
-    // Step 1: Save App Settings
+    // Step 1
     async function saveStep1() {
         hideAlert(1);
         try {
@@ -691,33 +611,20 @@
                 environment: document.getElementById('environment').value,
                 timezone: document.getElementById('timezone').value,
             });
-            if (result.success) {
-                goToStep(2);
-            } else {
-                showAlert(1, 'error', result.error || 'Failed to save settings');
-            }
-        } catch (e) {
-            showAlert(1, 'error', 'Network error. Please try again.');
-        }
+            if (result.success) { goToStep(2); }
+            else { showAlert(1, 'error', result.error || 'Failed to save settings'); }
+        } catch (e) { showAlert(1, 'error', 'Network error.'); }
     }
 
-    // Step 2: Database
+    // Step 2
     function toggleDbFields() {
         const driver = document.getElementById('db_driver').value;
-        const networkFields = document.querySelector('.db-network-fields');
-        const sqliteFields = document.querySelector('.db-sqlite-fields');
-
-        if (driver === 'pdo_sqlite') {
-            networkFields.style.display = 'none';
-            sqliteFields.style.display = 'block';
-        } else {
-            networkFields.style.display = 'block';
-            sqliteFields.style.display = 'none';
-            // Update default port
+        document.querySelector('.db-network-fields').style.display = driver === 'pdo_sqlite' ? 'none' : 'block';
+        document.querySelector('.db-sqlite-fields').style.display = driver === 'pdo_sqlite' ? 'block' : 'none';
+        if (driver !== 'pdo_sqlite') {
             const portMap = { pdo_mysql: '3306', pdo_pgsql: '5432', pdo_sqlsrv: '1433' };
             document.getElementById('db_port').value = portMap[driver] || '3306';
         }
-        // Reset on driver change
     }
 
     function getDbData() {
@@ -740,7 +647,7 @@
         const btn = document.getElementById('btn-step2-next');
         const origHtml = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> Setting up database...';
+        btn.innerHTML = '<span class="spinner"></span> Setting up...';
 
         try {
             const result = await apiCall('/setup/setup-database', getDbData());
@@ -750,31 +657,23 @@
                 btn.disabled = false;
                 goToStep(3);
             } else if (result.has_tables) {
-                // DB has existing tables — ask user to confirm
                 btn.innerHTML = origHtml;
                 btn.disabled = false;
                 showAlert(2, 'info', result.error);
-                // Replace Continue button with Confirm button temporarily
-                btn.innerHTML = 'Yes, Continue Anyway <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+                btn.innerHTML = 'Yes, Continue Anyway <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
                 btn.onclick = async function() {
                     hideAlert(2);
                     btn.disabled = true;
-                    btn.innerHTML = '<span class="spinner"></span> Setting up database...';
+                    btn.innerHTML = '<span class="spinner"></span> Setting up...';
                     try {
                         const dbData = getDbData();
                         dbData.confirm_existing = true;
-                        const retryResult = await apiCall('/setup/setup-database', dbData);
-                        if (retryResult.success) {
-                            btn.innerHTML = origHtml;
-                            btn.disabled = false;
-                            btn.onclick = saveStep2;
-                            goToStep(3);
-                        } else {
-                            showAlert(2, 'error', retryResult.error);
-                            btn.innerHTML = origHtml;
-                            btn.disabled = false;
-                            btn.onclick = saveStep2;
-                        }
+                        const r = await apiCall('/setup/setup-database', dbData);
+                        btn.innerHTML = origHtml;
+                        btn.disabled = false;
+                        btn.onclick = saveStep2;
+                        if (r.success) { goToStep(3); }
+                        else { showAlert(2, 'error', r.error); }
                     } catch (e) {
                         showAlert(2, 'error', 'Network error.');
                         btn.innerHTML = origHtml;
@@ -788,29 +687,20 @@
                 btn.disabled = false;
             }
         } catch (e) {
-            showAlert(3, 'error', 'Installation failed. Check your database connection.');
-            btn.innerHTML = 'Retry';
+            showAlert(2, 'error', 'Network error. Please try again.');
+            btn.innerHTML = origHtml;
             btn.disabled = false;
-            btn.onclick = installTables;
         }
     }
 
-    // Step 4: Create Admin
+    // Step 3
     async function createAdmin() {
         hideAlert(3);
-
         const password = document.getElementById('admin_password').value;
         const confirm = document.getElementById('admin_password_confirm').value;
 
-        if (password !== confirm) {
-            showAlert(3, 'error', 'Passwords do not match.');
-            return;
-        }
-
-        if (password.length < 12) {
-            showAlert(3, 'error', 'Password must be at least 12 characters.');
-            return;
-        }
+        if (password !== confirm) { showAlert(3, 'error', 'Passwords do not match.'); return; }
+        if (password.length < 12) { showAlert(3, 'error', 'Password must be at least 12 characters.'); return; }
 
         try {
             const result = await apiCall('/setup/create-admin', {
@@ -821,30 +711,22 @@
             });
 
             if (result.success) {
-                // Complete installation
                 const completeResult = await apiCall('/setup/complete', {});
-                if (completeResult.success) {
-                    goToStep(4);
-                } else {
-                    showAlert(3, 'error', completeResult.error || 'Failed to finalize setup.');
-                }
+                if (completeResult.success) { goToStep(4); }
+                else { showAlert(3, 'error', completeResult.error || 'Failed to finalize.'); }
             } else {
                 showAlert(3, 'error', result.error);
             }
-        } catch (e) {
-            showAlert(3, 'error', 'Network error. Please try again.');
-        }
+        } catch (e) { showAlert(3, 'error', 'Network error.'); }
     }
 
-    // --- Bind event listeners (CSP-safe, no inline handlers) ---
+    // Bind events
     document.getElementById('btn-step1-next').addEventListener('click', saveStep1);
     document.getElementById('db_driver').addEventListener('change', toggleDbFields);
     document.getElementById('btn-step2-back').addEventListener('click', function() { goToStep(1); });
     document.getElementById('btn-step2-next').addEventListener('click', saveStep2);
     document.getElementById('btn-step3-back').addEventListener('click', function() { goToStep(2); });
     document.getElementById('btn-create-admin').addEventListener('click', createAdmin);
-
-    // Initialize DB fields visibility
     toggleDbFields();
 </script>
 
