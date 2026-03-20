@@ -12,88 +12,81 @@
 
         :root {
             --bg: #0a0a0a;
-            --bg-right: #fafafa;
-            --bg-input: #fff;
+            --bg-card: #111;
+            --bg-input: #1a1a1a;
             --border: rgba(255,255,255,0.08);
-            --border-light: #e0e0e0;
-            --border-focus: #06b6d4;
+            --border-focus: rgba(6,182,212,0.5);
             --text: #ededed;
-            --text-dark: #111;
-            --text-muted: #666;
-            --text-muted-dark: #888;
+            --text-2: #888;
+            --text-3: #555;
             --primary: #06b6d4;
-            --error: #dc2626;
-            --success: #16a34a;
-            --radius: 10px;
+            --error: #ef4444;
+            --success: #22c55e;
+            --radius: 12px;
             --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         body {
             font-family: var(--font);
-            margin: 0;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* ── Split Layout ── */
-        .login-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 100vh;
-        }
-
-        /* ── Left Panel — Branding ── */
-        .login-sidebar {
-            position: relative;
             background: var(--bg);
             color: var(--text);
-            padding: 48px;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            -webkit-font-smoothing: antialiased;
+            position: relative;
             overflow: hidden;
         }
 
-        /* Grid pattern */
-        .login-sidebar::before {
+        /* Grid pattern background */
+        body::before {
             content: '';
-            position: absolute;
+            position: fixed;
             inset: 0;
             background-image:
                 linear-gradient(var(--border) 1px, transparent 1px),
                 linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 40px 40px;
-            opacity: 0.5;
+            background-size: 48px 48px;
+            opacity: 0.4;
+            pointer-events: none;
         }
 
-        /* Gradient glow */
-        .login-sidebar::after {
+        /* Subtle glow */
+        body::after {
             content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 30% 40%, rgba(6,182,212,0.08), transparent 70%);
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(6,182,212,0.06), transparent 70%);
+            pointer-events: none;
         }
 
-        .sidebar-inner {
+        .login-card {
             position: relative;
             z-index: 1;
-            max-width: 420px;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            margin: 24px;
         }
 
-        .brand-logo {
+        .login-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 40px;
-        }
-
-        .brand-logo span {
-            font-size: 1.25rem;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1.1rem;
             font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--text);
         }
 
-        .brand-version {
-            font-size: 0.7rem;
+        .login-logo .badge {
+            font-size: 0.65rem;
             font-weight: 600;
             background: rgba(6,182,212,0.15);
             color: var(--primary);
@@ -101,125 +94,38 @@
             border-radius: 999px;
         }
 
-        .brand-headline {
-            font-size: 2rem;
-            font-weight: 800;
-            line-height: 1.15;
-            letter-spacing: -0.03em;
-            margin-bottom: 16px;
-        }
-
-        .brand-desc {
-            color: var(--text-muted-dark);
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 36px;
-        }
-
-        .feature-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .feature-item {
-            display: flex;
-            gap: 14px;
-            align-items: flex-start;
-        }
-
-        .feature-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .feature-icon svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        .feature-item h4 {
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .feature-item p {
-            font-size: 0.8rem;
-            color: var(--text-muted-dark);
-        }
-
-        /* ── Right Panel — Login Form ── */
-        .login-main {
-            background: var(--bg-right);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px;
-        }
-
-        .login-form-wrap {
-            width: 100%;
-            max-width: 380px;
-        }
-
         .login-title {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--text-dark);
+            text-align: center;
             margin-bottom: 4px;
         }
 
         .login-subtitle {
-            color: var(--text-muted);
+            text-align: center;
+            color: var(--text-2);
             font-size: 0.875rem;
             margin-bottom: 32px;
         }
 
-        /* ── Form ── */
         .form-group { margin-bottom: 20px; }
 
-        .form-label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
         .form-group label {
+            display: block;
             font-size: 0.8125rem;
             font-weight: 500;
-            color: var(--text-dark);
+            color: var(--text-2);
+            margin-bottom: 6px;
         }
-
-        .form-group label .required {
-            color: var(--error);
-            margin-left: 2px;
-        }
-
-        .forgot-link {
-            font-size: 0.75rem;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .forgot-link:hover { text-decoration: underline; }
 
         .form-control {
             width: 100%;
             padding: 11px 14px;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             font-size: 0.9rem;
             font-family: var(--font);
-            color: var(--text-dark);
+            color: var(--text);
             background: var(--bg-input);
             transition: border-color 0.15s, box-shadow 0.15s;
             outline: none;
@@ -227,20 +133,25 @@
 
         .form-control:focus {
             border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(6,182,212,0.1);
+            box-shadow: 0 0 0 3px rgba(6,182,212,0.08);
         }
 
-        .form-control::placeholder { color: #aaa; }
+        .form-control::placeholder { color: var(--text-3); }
         .form-control.is-invalid { border-color: var(--error); }
-        .invalid-feedback { color: var(--error); font-size: 0.8rem; margin-top: 4px; }
+
+        .invalid-feedback {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
 
         .btn-submit {
             width: 100%;
             padding: 12px;
-            background: var(--text-dark);
-            color: #fff;
+            background: var(--primary);
+            color: #000;
             border: none;
-            border-radius: var(--radius);
+            border-radius: 8px;
             font-size: 0.9rem;
             font-weight: 600;
             font-family: var(--font);
@@ -249,137 +160,81 @@
             margin-top: 8px;
         }
 
-        .btn-submit:hover { background: #333; }
+        .btn-submit:hover { background: #22d3ee; }
 
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.75rem;
-            color: #bbb;
-        }
-
-        /* ── Alerts ── */
         .alert {
             padding: 10px 14px;
-            border-radius: var(--radius);
+            border-radius: 8px;
             font-size: 0.8125rem;
             margin-bottom: 20px;
         }
-        .alert--error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-        .alert--success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
 
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-            .login-layout { grid-template-columns: 1fr; }
-            .login-sidebar { display: none; }
-            .login-main { min-height: 100vh; }
+        .alert--error {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.2);
+            color: var(--error);
+        }
+
+        .alert--success {
+            background: rgba(34,197,94,0.1);
+            border: 1px solid rgba(34,197,94,0.2);
+            color: var(--success);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 0.75rem;
+            color: var(--text-3);
         }
     </style>
 </head>
 <body>
 
-<div class="login-layout">
-    <!-- Left Panel — Branding -->
-    <aside class="login-sidebar">
-        <div class="sidebar-inner">
-            <div class="brand-logo">
-                <span>⚡ {{ config('app.name', 'ZephyrPHP') }}</span>
-                <span class="brand-version">CMS</span>
-            </div>
+<div class="login-card">
+    <div class="login-logo">
+        ⚡ {{ config('app.name', 'ZephyrPHP') }}
+        <span class="badge">CMS</span>
+    </div>
 
-            <h1 class="brand-headline">Build Beautiful Websites Visually</h1>
-            <p class="brand-desc">
-                A complete CMS with visual page builder, theme customizer, and AI-powered content tools. Everything managed from a simple admin panel.
-            </p>
+    <h2 class="login-title">Welcome back</h2>
+    <p class="login-subtitle">Sign in to your account</p>
 
-            <ul class="feature-list">
-                <li class="feature-item">
-                    <div class="feature-icon" style="background: rgba(34,197,94,0.1);">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-                    </div>
-                    <div>
-                        <h4>Visual Page Builder</h4>
-                        <p>Drag-and-drop sections with live preview</p>
-                    </div>
-                </li>
-                <li class="feature-item">
-                    <div class="feature-icon" style="background: rgba(6,182,212,0.1);">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    </div>
-                    <div>
-                        <h4>Theme Customizer</h4>
-                        <p>Fonts, colors, and styles — all in real time</p>
-                    </div>
-                </li>
-                <li class="feature-item">
-                    <div class="feature-icon" style="background: rgba(168,85,247,0.1);">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    </div>
-                    <div>
-                        <h4>Secure & Private</h4>
-                        <p>OWASP hardened with role-based access</p>
-                    </div>
-                </li>
-                <li class="feature-item">
-                    <div class="feature-icon" style="background: rgba(245,158,11,0.1);">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </div>
-                    <div>
-                        <h4>AI Content Tools</h4>
-                        <p>Generate pages and content with AI</p>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </aside>
+    {% if flash('error') %}
+        <div class="alert alert--error">{{ flash('error') }}</div>
+    {% endif %}
+    {% if flash('success') %}
+        <div class="alert alert--success">{{ flash('success') }}</div>
+    {% endif %}
 
-    <!-- Right Panel — Login Form -->
-    <main class="login-main">
-        <div class="login-form-wrap">
-            <h2 class="login-title">Welcome back</h2>
-            <p class="login-subtitle">Sign in to your account to continue</p>
+    <form method="POST" action="/zephyrphp/auth/login">
+        {{ csrf_field() | raw }}
 
-            {% if flash('error') %}
-                <div class="alert alert--error">{{ flash('error') }}</div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email"
+                   class="form-control{% if flash('errors').email is defined %} is-invalid{% endif %}"
+                   value="{{ flash('_old_input').email ?? '' }}"
+                   placeholder="you@example.com" required autofocus>
+            {% if flash('errors').email is defined %}
+                <div class="invalid-feedback">{{ flash('errors').email }}</div>
             {% endif %}
-            {% if flash('success') %}
-                <div class="alert alert--success">{{ flash('success') }}</div>
-            {% endif %}
-
-            <form method="POST" action="/login">
-                {{ csrf_field() | raw }}
-
-                <div class="form-group">
-                    <div class="form-label-row">
-                        <label for="email">Email <span class="required">*</span></label>
-                    </div>
-                    <input type="email" id="email" name="email"
-                           class="form-control{% if flash('errors').email is defined %} is-invalid{% endif %}"
-                           value="{{ flash('_old_input').email ?? '' }}"
-                           placeholder="you@example.com" required autofocus>
-                    {% if flash('errors').email is defined %}
-                        <div class="invalid-feedback">{{ flash('errors').email }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <div class="form-label-row">
-                        <label for="password">Password <span class="required">*</span></label>
-                    </div>
-                    <input type="password" id="password" name="password"
-                           class="form-control{% if flash('errors').password is defined %} is-invalid{% endif %}"
-                           placeholder="Enter your password" required>
-                    {% if flash('errors').password is defined %}
-                        <div class="invalid-feedback">{{ flash('errors').password }}</div>
-                    {% endif %}
-                </div>
-
-                <button type="submit" class="btn-submit">Sign In</button>
-            </form>
-
-            <p class="login-footer">Your data is safe with us</p>
         </div>
-    </main>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"
+                   class="form-control{% if flash('errors').password is defined %} is-invalid{% endif %}"
+                   placeholder="Enter your password" required>
+            {% if flash('errors').password is defined %}
+                <div class="invalid-feedback">{{ flash('errors').password }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-submit">Sign In</button>
+    </form>
+
+    <p class="login-footer">&copy; {{ "now"|date("Y") }} {{ config('app.name', 'ZephyrPHP') }}</p>
 </div>
 
 </body>

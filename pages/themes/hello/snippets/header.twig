@@ -6,9 +6,9 @@
                 {% set _auth = auth() %}
                 {% if _auth and _auth.check %}
                     <li><a href="{{ admin_url() }}">Dashboard</a></li>
-                    <li><form method="POST" action="/logout" style="display:inline;">{{ csrf_field()|raw }}<button type="submit" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;">Logout</button></form></li>
+                    <li><form method="POST" action="/zephyrphp/auth/logout" style="display:inline;">{{ csrf_field()|raw }}<button type="submit" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;">Logout</button></form></li>
                 {% else %}
-                    <li><a href="/login">Sign In</a></li>
+                    <li><a href="/zephyrphp/auth/login">Sign In</a></li>
                 {% endif %}
             </ul>
         </nav>

@@ -69,6 +69,6 @@ class LoginController extends Controller
     public function logout(): void
     {
         Auth::logout();
-        $this->redirect('/login');
+        $this->redirect('/zephyrphp/auth/login');
     }
 }

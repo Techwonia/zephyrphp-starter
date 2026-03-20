@@ -22,7 +22,6 @@ if (!file_exists(BASE_PATH . '/storage/.installed')) {
 }
 
 // Auth routes
-Route::get('/login', [LoginController::class, 'showLoginForm'], [GuestMiddleware::class]);
-Route::post('/login', [LoginController::class, 'login'], [GuestMiddleware::class]);
-// Auth routes
-Route::post('/logout', [LoginController::class, 'logout'], [AuthMiddleware::class]);
+Route::get('/zephyrphp/auth/login', [LoginController::class, 'showLoginForm'], [GuestMiddleware::class]);
+Route::post('/zephyrphp/auth/login', [LoginController::class, 'login'], [GuestMiddleware::class]);
+Route::post('/zephyrphp/auth/logout', [LoginController::class, 'logout'], [AuthMiddleware::class]);
