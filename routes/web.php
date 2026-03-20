@@ -16,10 +16,7 @@ use App\Setup\SetupController;
 if (!file_exists(BASE_PATH . '/storage/.installed')) {
     Route::get('/setup', [SetupController::class, 'index']);
     Route::post('/setup/save-settings', [SetupController::class, 'saveSettings']);
-    Route::post('/setup/save-database', [SetupController::class, 'saveDatabase']);
-    Route::post('/setup/test-db', [SetupController::class, 'testDatabase']);
-    Route::post('/setup/create-db', [SetupController::class, 'createDatabase']);
-    Route::post('/setup/install-tables', [SetupController::class, 'installTables']);
+    Route::post('/setup/setup-database', [SetupController::class, 'setupDatabase']);
     Route::post('/setup/create-admin', [SetupController::class, 'createAdmin']);
     Route::post('/setup/complete', [SetupController::class, 'complete']);
 }

@@ -454,10 +454,6 @@
         <div class="progress-step">
             <div class="step-circle" data-step="4">4</div>
         </div>
-        <div class="step-line" data-line="4"></div>
-        <div class="progress-step">
-            <div class="step-circle" data-step="5">5</div>
-        </div>
     </div>
 
     <div class="setup-card">
@@ -472,11 +468,6 @@
                 <div class="form-group">
                     <label for="app_name">Application Name</label>
                     <input type="text" id="app_name" value="{{ env.APP_NAME ?? 'ZephyrPHP' }}" placeholder="My Awesome Site">
-                </div>
-                <div class="form-group">
-                    <label for="app_url">Application URL</label>
-                    <input type="text" id="app_url" value="{{ env.APP_URL ?? 'http://localhost:8000' }}" placeholder="http://localhost:8000">
-                    <div class="help-text">The URL where your app will be accessible</div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -555,14 +546,8 @@
                         <div class="help-text">Relative to project root</div>
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-outline btn-sm" id="btn-test-db">
-                        <span class="test-db-text">Test Connection</span>
-                        <span class="test-db-spinner spinner" style="display:none;"></span>
-                    </button>
-                    <button class="btn btn-outline btn-sm" id="btn-create-db" style="display:none;">
-                        Create Database
-                    </button>
+                <div class="help-text" style="margin-top: 8px; color: var(--text-muted);">
+                    Connection will be tested automatically when you click Continue. If the database doesn't exist, it will be created.
                 </div>
             </div>
             <div class="card-footer">
@@ -577,72 +562,16 @@
             </div>
         </div>
 
-        <!-- Step 3: Install Tables -->
-        <div class="step-content" data-step="3">
-            <div class="card-header">
-                <h2>Install Database</h2>
-                <p>Create the required database tables</p>
-            </div>
-            <div class="card-body">
-                <div id="alert-step3" class="alert"></div>
-                <ul class="install-list">
-                    <li class="install-item" data-table="users">
-                        <div class="install-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        </div>
-                        <span class="item-label">Users & Authentication</span>
-                        <span class="item-status">Pending</span>
-                    </li>
-                    <li class="install-item" data-table="roles">
-                        <div class="install-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        </div>
-                        <span class="item-label">Roles & Permissions</span>
-                        <span class="item-status">Pending</span>
-                    </li>
-                    <li class="install-item" data-table="cms_page_types">
-                        <div class="install-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        </div>
-                        <span class="item-label">CMS Pages & Collections</span>
-                        <span class="item-status">Pending</span>
-                    </li>
-                    <li class="install-item" data-table="cms_themes">
-                        <div class="install-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-                        </div>
-                        <span class="item-label">Themes & Design</span>
-                        <span class="item-status">Pending</span>
-                    </li>
-                    <li class="install-item" data-table="cms_media">
-                        <div class="install-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        </div>
-                        <span class="item-label">Media Library</span>
-                        <span class="item-status">Pending</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-footer">
-                <button class="btn btn-secondary" id="btn-step3-back">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                    Back
-                </button>
-                <button class="btn btn-primary" id="btn-install">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Install
-                </button>
-            </div>
-        </div>
+        {# Step 3 removed — database setup is now handled in Step 2's "Continue" button #}
 
-        <!-- Step 4: Admin Account -->
-        <div class="step-content" data-step="4">
+        <!-- Step 3: Admin Account -->
+        <div class="step-content" data-step="3">
             <div class="card-header">
                 <h2>Create Admin Account</h2>
                 <p>Set up your administrator account</p>
             </div>
             <div class="card-body">
-                <div id="alert-step4" class="alert"></div>
+                <div id="alert-step3" class="alert"></div>
                 <div class="form-group">
                     <label for="admin_name">Full Name</label>
                     <input type="text" id="admin_name" placeholder="John Doe" required>
@@ -663,7 +592,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-secondary" id="btn-step4-back">
+                <button class="btn btn-secondary" id="btn-step3-back">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                     Back
                 </button>
@@ -674,8 +603,8 @@
             </div>
         </div>
 
-        <!-- Step 5: Complete -->
-        <div class="step-content" data-step="5">
+        <!-- Step 4: Complete -->
+        <div class="step-content" data-step="4">
             <div class="card-body">
                 <div class="success-content">
                     <div class="success-icon">
@@ -695,7 +624,7 @@
 
 <script nonce="{{ csp_nonce() }}">
     let currentStep = 1;
-    let dbTested = false;
+    // Database step handles test+create+tables in one call
 
     function goToStep(step) {
         // Hide all steps
@@ -759,7 +688,6 @@
         try {
             const result = await apiCall('/setup/save-settings', {
                 app_name: document.getElementById('app_name').value,
-                app_url: document.getElementById('app_url').value,
                 environment: document.getElementById('environment').value,
                 timezone: document.getElementById('timezone').value,
             });
@@ -789,7 +717,7 @@
             const portMap = { pdo_mysql: '3306', pdo_pgsql: '5432', pdo_sqlsrv: '1433' };
             document.getElementById('db_port').value = portMap[driver] || '3306';
         }
-        dbTested = false;
+        // Reset on driver change
     }
 
     function getDbData() {
@@ -807,105 +735,57 @@
         };
     }
 
-    async function testDb() {
-        hideAlert(2);
-        document.querySelector('.test-db-text').style.display = 'none';
-        document.querySelector('.test-db-spinner').style.display = 'inline-block';
-
-        try {
-            const result = await apiCall('/setup/test-db', getDbData());
-            document.querySelector('.test-db-text').style.display = 'inline';
-            document.querySelector('.test-db-spinner').style.display = 'none';
-
-            if (result.success) {
-                if (result.db_exists === false) {
-                    showAlert(2, 'info', 'Connected! Database does not exist yet.');
-                    document.getElementById('btn-create-db').style.display = 'inline-flex';
-                } else {
-                    showAlert(2, 'success', 'Connection successful!');
-                    document.getElementById('btn-create-db').style.display = 'none';
-                }
-                dbTested = true;
-            } else {
-                showAlert(2, 'error', result.error);
-                dbTested = false;
-            }
-        } catch (e) {
-            document.querySelector('.test-db-text').style.display = 'inline';
-            document.querySelector('.test-db-spinner').style.display = 'none';
-            showAlert(2, 'error', 'Network error. Please try again.');
-        }
-    }
-
-    async function createDb() {
-        hideAlert(2);
-        try {
-            const result = await apiCall('/setup/create-db', getDbData());
-            if (result.success) {
-                showAlert(2, 'success', result.message);
-                document.getElementById('btn-create-db').style.display = 'none';
-                dbTested = true;
-            } else {
-                showAlert(2, 'error', result.error);
-            }
-        } catch (e) {
-            showAlert(2, 'error', 'Network error.');
-        }
-    }
-
     async function saveStep2() {
         hideAlert(2);
-        if (!dbTested) {
-            showAlert(2, 'info', 'Please test your database connection first.');
-            return;
-        }
+        const btn = document.getElementById('btn-step2-next');
+        const origHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Setting up database...';
 
         try {
-            const result = await apiCall('/setup/save-database', getDbData());
+            const result = await apiCall('/setup/setup-database', getDbData());
+
             if (result.success) {
+                btn.innerHTML = origHtml;
+                btn.disabled = false;
                 goToStep(3);
+            } else if (result.has_tables) {
+                // DB has existing tables — ask user to confirm
+                btn.innerHTML = origHtml;
+                btn.disabled = false;
+                showAlert(2, 'info', result.error);
+                // Replace Continue button with Confirm button temporarily
+                btn.innerHTML = 'Yes, Continue Anyway <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+                btn.onclick = async function() {
+                    hideAlert(2);
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner"></span> Setting up database...';
+                    try {
+                        const dbData = getDbData();
+                        dbData.confirm_existing = true;
+                        const retryResult = await apiCall('/setup/setup-database', dbData);
+                        if (retryResult.success) {
+                            btn.innerHTML = origHtml;
+                            btn.disabled = false;
+                            btn.onclick = saveStep2;
+                            goToStep(3);
+                        } else {
+                            showAlert(2, 'error', retryResult.error);
+                            btn.innerHTML = origHtml;
+                            btn.disabled = false;
+                            btn.onclick = saveStep2;
+                        }
+                    } catch (e) {
+                        showAlert(2, 'error', 'Network error.');
+                        btn.innerHTML = origHtml;
+                        btn.disabled = false;
+                        btn.onclick = saveStep2;
+                    }
+                };
             } else {
                 showAlert(2, 'error', result.error);
-            }
-        } catch (e) {
-            showAlert(2, 'error', 'Network error.');
-        }
-    }
-
-    // Step 3: Install Tables
-    async function installTables() {
-        hideAlert(3);
-        const btn = document.getElementById('btn-install');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> Installing...';
-
-        // Set all items to pending with spinner
-        document.querySelectorAll('.install-item').forEach(item => {
-            item.querySelector('.item-status').textContent = 'Waiting...';
-        });
-
-        try {
-            const result = await apiCall('/setup/install-tables', {});
-
-            if (result.success) {
-                // Animate checklist completion
-                const items = document.querySelectorAll('.install-item');
-                for (let i = 0; i < items.length; i++) {
-                    await new Promise(r => setTimeout(r, 300));
-                    items[i].classList.add('done');
-                    items[i].querySelector('.install-icon').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-                    items[i].querySelector('.item-status').textContent = 'Installed';
-                }
-
-                await new Promise(r => setTimeout(r, 500));
-                btn.innerHTML = 'Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+                btn.innerHTML = origHtml;
                 btn.disabled = false;
-                btn.onclick = () => goToStep(4);
-            } else {
-                showAlert(3, 'error', result.error);
-                btn.innerHTML = 'Retry';
-                btn.disabled = false;
-                btn.onclick = installTables;
             }
         } catch (e) {
             showAlert(3, 'error', 'Installation failed. Check your database connection.');
@@ -917,18 +797,18 @@
 
     // Step 4: Create Admin
     async function createAdmin() {
-        hideAlert(4);
+        hideAlert(3);
 
         const password = document.getElementById('admin_password').value;
         const confirm = document.getElementById('admin_password_confirm').value;
 
         if (password !== confirm) {
-            showAlert(4, 'error', 'Passwords do not match.');
+            showAlert(3, 'error', 'Passwords do not match.');
             return;
         }
 
         if (password.length < 12) {
-            showAlert(4, 'error', 'Password must be at least 12 characters.');
+            showAlert(3, 'error', 'Password must be at least 12 characters.');
             return;
         }
 
@@ -944,28 +824,24 @@
                 // Complete installation
                 const completeResult = await apiCall('/setup/complete', {});
                 if (completeResult.success) {
-                    goToStep(5);
+                    goToStep(4);
                 } else {
-                    showAlert(4, 'error', completeResult.error || 'Failed to finalize setup.');
+                    showAlert(3, 'error', completeResult.error || 'Failed to finalize setup.');
                 }
             } else {
-                showAlert(4, 'error', result.error);
+                showAlert(3, 'error', result.error);
             }
         } catch (e) {
-            showAlert(4, 'error', 'Network error. Please try again.');
+            showAlert(3, 'error', 'Network error. Please try again.');
         }
     }
 
     // --- Bind event listeners (CSP-safe, no inline handlers) ---
     document.getElementById('btn-step1-next').addEventListener('click', saveStep1);
     document.getElementById('db_driver').addEventListener('change', toggleDbFields);
-    document.getElementById('btn-test-db').addEventListener('click', testDb);
-    document.getElementById('btn-create-db').addEventListener('click', createDb);
     document.getElementById('btn-step2-back').addEventListener('click', function() { goToStep(1); });
     document.getElementById('btn-step2-next').addEventListener('click', saveStep2);
     document.getElementById('btn-step3-back').addEventListener('click', function() { goToStep(2); });
-    document.getElementById('btn-install').addEventListener('click', installTables);
-    document.getElementById('btn-step4-back').addEventListener('click', function() { goToStep(3); });
     document.getElementById('btn-create-admin').addEventListener('click', createAdmin);
 
     // Initialize DB fields visibility

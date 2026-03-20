@@ -1,15 +1,15 @@
 {
     "name": "zephyrphp/starter",
-    "description": "ZephyrPHP Starter - A CMS-powered starting point for ZephyrPHP applications",
+    "description": "ZephyrPHP Starter - Create a new ZephyrPHP CMS website",
     "type": "project",
     "license": "MIT",
     "keywords": [
         "zephyrphp",
+        "cms",
         "starter",
-        "framework",
+        "website",
         "php",
-        "minimal",
-        "boilerplate"
+        "page-builder"
     ],
     "authors": [
         {
@@ -45,14 +45,7 @@
     "scripts": {
         "post-create-project-cmd": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@composer dump-autoload",
             "ZephyrPHP\\Console\\Installer::postCreateProject"
-        ],
-        "post-install-cmd": [
-            "@composer dump-autoload"
-        ],
-        "post-update-cmd": [
-            "@composer dump-autoload"
         ],
         "serve": "php craftsman serve",
         "test": "phpunit"

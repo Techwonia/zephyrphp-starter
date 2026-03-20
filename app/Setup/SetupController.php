@@ -79,7 +79,6 @@ class SetupController extends Controller
 
             $this->updateEnv([
                 'APP_NAME' => $data['app_name'] ?? 'ZephyrPHP',
-                'APP_URL' => $data['app_url'] ?? 'http://localhost:8000',
                 'ENV' => $data['environment'] ?? 'dev',
                 'APP_TIMEZONE' => $data['timezone'] ?? 'UTC',
             ]);
@@ -93,9 +92,16 @@ class SetupController extends Controller
     }
 
     /**
-     * Save database config (Step 2)
+     * Setup database — single step: save config, test, create DB if needed, install tables (Step 2)
+     *
+     * Flow:
+     * 1. Validate & save DB credentials to .env
+     * 2. Test server connection
+     * 3. Check if database exists → create if missing (return prompt if no CREATE permission)
+     * 4. Create only missing tables (CREATE TABLE IF NOT EXISTS) — never drops existing data
+     * 5. Seed theme if no themes exist
      */
-    public function saveDatabase()
+    public function setupDatabase()
     {
         header('Content-Type: application/json');
 
@@ -105,9 +111,9 @@ class SetupController extends Controller
 
         try {
             $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-
             $driver = $data['db_driver'] ?? 'pdo_mysql';
 
+            // ── Step 1: Validate & save DB credentials to .env ──
             $envValues = ['DB_CONNECTION' => $driver];
 
             if ($driver === 'pdo_sqlite') {
@@ -117,7 +123,6 @@ class SetupController extends Controller
                     exit;
                 }
                 $envValues['DB_DATABASE'] = $dbPath;
-                // Create SQLite file if needed
                 $fullPath = BASE_PATH . '/' . $dbPath;
                 $dir = dirname($fullPath);
                 if (!is_dir($dir)) {
@@ -129,14 +134,12 @@ class SetupController extends Controller
             } else {
                 $dbHost = $data['db_host'] ?? '127.0.0.1';
                 $dbPort = $data['db_port'] ?? '3306';
+                $dbName = $data['db_name'] ?? 'zephyrphp';
 
-                // Validate host: only allow hostnames/IPs, not file:// or other schemes
                 if (!preg_match('/^[a-zA-Z0-9.\-:]+$/', $dbHost)) {
                     echo json_encode(['success' => false, 'error' => 'Invalid database host.']);
                     exit;
                 }
-
-                // Validate port: must be a valid integer in range
                 $dbPort = (string)(int)$dbPort;
                 if ((int)$dbPort < 1 || (int)$dbPort > 65535) {
                     echo json_encode(['success' => false, 'error' => 'Invalid database port.']);
@@ -145,52 +148,24 @@ class SetupController extends Controller
 
                 $envValues['DB_HOST'] = $dbHost;
                 $envValues['DB_PORT'] = $dbPort;
-                $envValues['DB_DATABASE'] = $data['db_name'] ?? 'zephyrphp';
+                $envValues['DB_DATABASE'] = $dbName;
                 $envValues['DB_USERNAME'] = $data['db_user'] ?? 'root';
                 $envValues['DB_PASSWORD'] = $data['db_pass'] ?? '';
             }
 
             $this->updateEnv($envValues);
 
-            echo json_encode(['success' => true]);
-        } catch (\Throwable $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
-        }
-        exit;
-    }
-
-    /**
-     * Test database connection (AJAX)
-     */
-    public function testDatabase()
-    {
-        header('Content-Type: application/json');
-
-        if (!$this->validatePostRequest()) {
-            exit;
-        }
-
-        try {
-            $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-            $driver = $data['db_driver'] ?? 'pdo_mysql';
-
+            // ── Step 2: Test server connection ──
             if ($driver === 'pdo_sqlite') {
-                $dbPath = $data['db_path'] ?? 'database/database.sqlite';
-                $dbPath = $this->validateSqlitePath($dbPath);
-                if ($dbPath === null) {
-                    exit;
-                }
-                $fullPath = BASE_PATH . '/' . $dbPath;
+                $fullPath = BASE_PATH . '/' . ($envValues['DB_DATABASE'] ?? 'database/database.sqlite');
                 $pdo = new \PDO("sqlite:$fullPath");
                 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-                echo json_encode(['success' => true, 'message' => 'SQLite connection successful']);
             } else {
-                $host = $data['db_host'] ?? '127.0.0.1';
-                $port = $data['db_port'] ?? '3306';
-                $dbName = $data['db_name'] ?? '';
-                $user = $data['db_user'] ?? 'root';
-                $pass = $data['db_pass'] ?? '';
+                $host = $envValues['DB_HOST'];
+                $port = $envValues['DB_PORT'];
+                $dbName = $envValues['DB_DATABASE'];
+                $user = $envValues['DB_USERNAME'];
+                $pass = $envValues['DB_PASSWORD'];
 
                 $dsnMap = [
                     'pdo_mysql' => "mysql:host=$host;port=$port",
@@ -199,128 +174,89 @@ class SetupController extends Controller
                 ];
 
                 $dsn = $dsnMap[$driver] ?? "mysql:host=$host;port=$port";
-                $pdo = new \PDO($dsn, $user, $pass);
-                $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-                // Check if database exists
+                try {
+                    $pdo = new \PDO($dsn, $user, $pass);
+                    $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+                } catch (\PDOException $e) {
+                    echo json_encode(['success' => false, 'error' => $this->friendlyDbError($e->getMessage())]);
+                    exit;
+                }
+
+                // ── Step 3: Check if database exists, create if needed ──
                 $dbExists = false;
-                if ($dbName) {
-                    if ($driver === 'pdo_mysql') {
-                        $stmt = $pdo->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = " . $pdo->quote($dbName));
-                        $dbExists = (bool) $stmt->fetch();
-                    } elseif ($driver === 'pdo_pgsql') {
-                        $stmt = $pdo->query("SELECT datname FROM pg_database WHERE datname = " . $pdo->quote($dbName));
-                        $dbExists = (bool) $stmt->fetch();
+                if ($driver === 'pdo_mysql') {
+                    $stmt = $pdo->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = " . $pdo->quote($dbName));
+                    $dbExists = (bool) $stmt->fetch();
+                } elseif ($driver === 'pdo_pgsql') {
+                    $stmt = $pdo->query("SELECT datname FROM pg_database WHERE datname = " . $pdo->quote($dbName));
+                    $dbExists = (bool) $stmt->fetch();
+                }
+
+                if (!$dbExists) {
+                    // Try to create the database
+                    try {
+                        $charset = $driver === 'pdo_mysql' ? ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci' : '';
+                        $pdo->exec("CREATE DATABASE IF NOT EXISTS " . $this->quoteIdentifier($pdo, $dbName) . $charset);
+                    } catch (\PDOException $e) {
+                        $msg = $e->getMessage();
+                        if (str_contains($msg, 'Access denied') || str_contains($msg, 'permission denied') || str_contains($msg, '1044')) {
+                            echo json_encode([
+                                'success' => false,
+                                'needs_create' => true,
+                                'error' => "Database '$dbName' does not exist and cannot be created automatically. Please create it through your hosting control panel (cPanel, Plesk, etc.) and try again.",
+                            ]);
+                        } else {
+                            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
+                        }
+                        exit;
                     }
                 }
 
+                // Connect to the actual database now
+                $dsnWithDb = [
+                    'pdo_mysql' => "mysql:host=$host;port=$port;dbname=$dbName;charset=utf8mb4",
+                    'pdo_pgsql' => "pgsql:host=$host;port=$port;dbname=$dbName",
+                    'pdo_sqlsrv' => "sqlsrv:Server=$host,$port;Database=$dbName",
+                ];
+                $pdo = new \PDO($dsnWithDb[$driver] ?? $dsnWithDb['pdo_mysql'], $user, $pass);
+                $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            }
+
+            // ── Step 4: Check for existing tables and warn user ──
+            $confirmed = $data['confirm_existing'] ?? false;
+
+            // Detect existing tables in the database
+            $driverName = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+            $existingTables = [];
+            if ($driverName === 'mysql') {
+                $stmt = $pdo->query("SHOW TABLES");
+                $existingTables = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+            } elseif ($driverName === 'pgsql') {
+                $stmt = $pdo->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'");
+                $existingTables = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+            } elseif ($driverName === 'sqlite') {
+                $stmt = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+                $existingTables = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+            }
+
+            // If there are existing tables that aren't ours, warn the user
+            $ourTables = ['users', 'roles', 'role_user', 'cms_themes', 'cms_collections', 'cms_fields', 'cms_media'];
+            $foreignTables = array_diff($existingTables, $ourTables);
+
+            if (!empty($foreignTables) && !$confirmed) {
                 echo json_encode([
-                    'success' => true,
-                    'message' => 'Connection successful',
-                    'db_exists' => $dbExists,
+                    'success' => false,
+                    'has_tables' => true,
+                    'existing_tables' => array_values($foreignTables),
+                    'error' => 'This database already has ' . count($foreignTables) . ' existing table(s): ' . implode(', ', array_slice($foreignTables, 0, 5)) . (count($foreignTables) > 5 ? '...' : '') . '. ZephyrPHP will add its own tables without touching existing ones. Continue?',
                 ]);
-            }
-        } catch (\PDOException $e) {
-            http_response_code(200); // Return 200 so JS gets the JSON
-            echo json_encode([
-                'success' => false,
-                'error' => $this->friendlyDbError($e->getMessage()),
-            ]);
-        }
-        exit;
-    }
-
-    /**
-     * Create the database if it doesn't exist
-     */
-    public function createDatabase()
-    {
-        header('Content-Type: application/json');
-
-        if (!$this->validatePostRequest()) {
-            exit;
-        }
-
-        try {
-            $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-            $driver = $data['db_driver'] ?? 'pdo_mysql';
-            $host = $data['db_host'] ?? '127.0.0.1';
-            $port = $data['db_port'] ?? '3306';
-            $dbName = $data['db_name'] ?? '';
-            $user = $data['db_user'] ?? 'root';
-            $pass = $data['db_pass'] ?? '';
-
-            if ($driver === 'pdo_sqlite') {
-                echo json_encode(['success' => true, 'message' => 'SQLite database ready']);
                 exit;
             }
 
-            $dsnMap = [
-                'pdo_mysql' => "mysql:host=$host;port=$port",
-                'pdo_pgsql' => "pgsql:host=$host;port=$port",
-            ];
-
-            // First, try connecting directly to the database (it may already exist on shared hosting)
-            $dsnWithDb = [
-                'pdo_mysql' => "mysql:host=$host;port=$port;dbname=$dbName;charset=utf8mb4",
-                'pdo_pgsql' => "pgsql:host=$host;port=$port;dbname=$dbName",
-            ];
-
-            try {
-                $testDsn = $dsnWithDb[$driver] ?? "mysql:host=$host;port=$port;dbname=$dbName;charset=utf8mb4";
-                $testPdo = new \PDO($testDsn, $user, $pass);
-                $testPdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-                echo json_encode(['success' => true, 'message' => "Database '$dbName' already exists and is accessible"]);
-                exit;
-            } catch (\PDOException $e) {
-                // Database doesn't exist or not accessible, try to create it
-            }
-
-            $dsn = $dsnMap[$driver] ?? "mysql:host=$host;port=$port";
-            $pdo = new \PDO($dsn, $user, $pass);
-            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-            try {
-                $charset = $driver === 'pdo_mysql' ? ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci' : '';
-                $pdo->exec("CREATE DATABASE IF NOT EXISTS " . $this->quoteIdentifier($pdo, $dbName) . $charset);
-                echo json_encode(['success' => true, 'message' => "Database '$dbName' created"]);
-            } catch (\PDOException $e) {
-                $msg = $e->getMessage();
-                if (str_contains($msg, 'Access denied') || str_contains($msg, 'permission denied') || str_contains($msg, '1044')) {
-                    echo json_encode([
-                        'success' => false,
-                        'error' => "CREATE DATABASE permission denied. On shared hosting, you typically need to create the database through your hosting control panel (cPanel, Plesk, etc.) and then enter the name here.",
-                    ]);
-                } else {
-                    echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
-                }
-            }
-        } catch (\PDOException $e) {
-            http_response_code(200);
-            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
-        }
-        exit;
-    }
-
-    /**
-     * Install all database tables (Step 3)
-     */
-    public function installTables()
-    {
-        header('Content-Type: application/json');
-
-        if (!$this->validatePostRequest()) {
-            exit;
-        }
-
-        try {
-            // Re-read .env to get latest DB config
-            $env = $this->readEnv();
-            $pdo = $this->connectWithEnv($env);
-
+            // ── Step 5: Create missing tables (CREATE TABLE IF NOT EXISTS — safe for existing data) ──
             $results = [];
 
-            // 1. Users table
             $this->createTable($pdo, 'users', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `name` VARCHAR(255) NOT NULL,
@@ -331,9 +267,8 @@ class SetupController extends Controller
                 `updatedAt` DATETIME NULL DEFAULT NULL,
                 UNIQUE KEY `uniq_email` (`email`)
             ");
-            $results[] = ['table' => 'users', 'status' => 'created'];
+            $results[] = ['table' => 'users', 'status' => 'ready'];
 
-            // 2. Roles table
             $this->createTable($pdo, 'roles', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `name` VARCHAR(100) NOT NULL,
@@ -344,9 +279,8 @@ class SetupController extends Controller
                 UNIQUE KEY `uniq_role_name` (`name`),
                 UNIQUE KEY `uniq_role_slug` (`slug`)
             ");
-            $results[] = ['table' => 'roles', 'status' => 'created'];
+            $results[] = ['table' => 'roles', 'status' => 'ready'];
 
-            // 3. Role-User pivot
             $this->createTable($pdo, 'role_user', "
                 `user_id` INT UNSIGNED NOT NULL,
                 `role_id` INT UNSIGNED NOT NULL,
@@ -354,9 +288,8 @@ class SetupController extends Controller
                 CONSTRAINT `fk_ru_user` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
                 CONSTRAINT `fk_ru_role` FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE
             ");
-            $results[] = ['table' => 'role_user', 'status' => 'created'];
+            $results[] = ['table' => 'role_user', 'status' => 'ready'];
 
-            // 4. CMS Themes
             $this->createTable($pdo, 'cms_themes', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `name` VARCHAR(255) NOT NULL,
@@ -367,9 +300,8 @@ class SetupController extends Controller
                 `updatedAt` DATETIME NULL DEFAULT NULL,
                 UNIQUE KEY `uniq_theme_slug` (`slug`)
             ");
-            $results[] = ['table' => 'cms_themes', 'status' => 'created'];
+            $results[] = ['table' => 'cms_themes', 'status' => 'ready'];
 
-            // 7. CMS Collections
             $this->createTable($pdo, 'cms_collections', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `name` VARCHAR(255) NOT NULL,
@@ -385,9 +317,8 @@ class SetupController extends Controller
                 `updatedAt` DATETIME NULL DEFAULT NULL,
                 UNIQUE KEY `uniq_coll_slug` (`slug`)
             ");
-            $results[] = ['table' => 'cms_collections', 'status' => 'created'];
+            $results[] = ['table' => 'cms_collections', 'status' => 'ready'];
 
-            // 8. CMS Fields
             $this->createTable($pdo, 'cms_fields', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `collection_id` INT UNSIGNED NOT NULL,
@@ -407,9 +338,8 @@ class SetupController extends Controller
                 `updatedAt` DATETIME NULL DEFAULT NULL,
                 CONSTRAINT `fk_cf_collection` FOREIGN KEY (`collection_id`) REFERENCES `cms_collections`(`id`) ON DELETE CASCADE
             ");
-            $results[] = ['table' => 'cms_fields', 'status' => 'created'];
+            $results[] = ['table' => 'cms_fields', 'status' => 'ready'];
 
-            // 9. CMS Media
             $this->createTable($pdo, 'cms_media', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `filename` VARCHAR(255) NOT NULL,
@@ -421,17 +351,29 @@ class SetupController extends Controller
                 `createdAt` DATETIME NULL DEFAULT NULL,
                 `updatedAt` DATETIME NULL DEFAULT NULL
             ");
-            $results[] = ['table' => 'cms_media', 'status' => 'created'];
+            $results[] = ['table' => 'cms_media', 'status' => 'ready'];
 
-            // Seed default theme
+            // ── Step 5: Seed theme if none exist ──
             $stmt = $pdo->query("SELECT COUNT(*) FROM `cms_themes`");
             if ((int) $stmt->fetchColumn() === 0) {
-                $pdo->exec("INSERT INTO `cms_themes` (`name`, `slug`, `status`, `createdAt`, `updatedAt`) VALUES ('Starter', 'starter', 'live', NOW(), NOW())");
+                $themesBase = BASE_PATH . '/' . ltrim(env('VIEWS_PATH', '/pages'), '/') . '/themes';
+                if (is_dir($themesBase)) {
+                    foreach (glob($themesBase . '/*/theme.json') as $themeFile) {
+                        $slug = basename(dirname($themeFile));
+                        $config = json_decode(file_get_contents($themeFile), true);
+                        $name = $config['name'] ?? ucfirst($slug);
+                        $safeSlug = preg_replace('/[^a-z0-9_-]/', '', strtolower($slug));
+                        $stmt = $pdo->prepare("INSERT INTO `cms_themes` (`name`, `slug`, `status`, `createdAt`, `updatedAt`) VALUES (?, ?, 'live', NOW(), NOW())");
+                        $stmt->execute([$name, $safeSlug]);
+                        break;
+                    }
+                }
             }
 
             echo json_encode(['success' => true, 'tables' => $results]);
+        } catch (\PDOException $e) {
+            echo json_encode(['success' => false, 'error' => $this->friendlyDbError($e->getMessage())]);
         } catch (\Throwable $e) {
-            http_response_code(200);
             echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
         }
         exit;
