@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Sign In — {{ config('app.name', 'ZephyrPHP') }}</title>
+    <title>Accept Invitation — {{ config('app.name', 'ZephyrPHP') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -34,14 +34,12 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ── Split Layout ── */
         .login-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
             min-height: 100vh;
         }
 
-        /* ── Left Panel — Neon Grid ── */
         .login-left {
             position: relative;
             overflow: hidden;
@@ -51,7 +49,6 @@
             border-right: 1px solid var(--border);
         }
 
-        /* Grid pattern */
         .login-left::before {
             content: '';
             position: absolute;
@@ -63,7 +60,6 @@
             opacity: 0.5;
         }
 
-        /* Neon grid lines with snake animation */
         @keyframes neon-v {
             0%   { background-position: 0 -100%; }
             100% { background-position: 0 200%; }
@@ -142,7 +138,6 @@
         .neon-line-h:nth-child(5) { top: 66%; }
         .neon-line-h:nth-child(5)::after, .neon-line-h:nth-child(5)::before { animation-delay: -4s; }
 
-        /* Circle at intersection */
         @keyframes circle-glow {
             0%, 100% { border-color: var(--border); box-shadow: none; }
             50% { border-color: rgba(6,182,212,0.25); box-shadow: 0 0 16px rgba(6,182,212,0.1); }
@@ -161,7 +156,6 @@
         .neon-circle:nth-child(6) { top: 33%; left: 25%; }
         .neon-circle:nth-child(7) { top: 66%; left: 75%; animation-delay: -3s; }
 
-        /* Center content on left */
         .left-content {
             position: relative;
             z-index: 1;
@@ -170,25 +164,10 @@
             max-width: 400px;
         }
 
-        .left-brand {
-            font-size: 2.5rem;
-            margin-bottom: 16px;
-        }
+        .left-brand { font-size: 2.5rem; margin-bottom: 16px; }
+        .left-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+        .left-desc { font-size: 0.9rem; color: var(--text-2); line-height: 1.6; }
 
-        .left-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 8px;
-        }
-
-        .left-desc {
-            font-size: 0.9rem;
-            color: var(--text-2);
-            line-height: 1.6;
-        }
-
-        /* ── Right Panel — Form ── */
         .login-right {
             display: flex;
             align-items: center;
@@ -201,18 +180,8 @@
             max-width: 380px;
         }
 
-        .login-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .login-subtitle {
-            color: var(--text-2);
-            font-size: 0.875rem;
-            margin-bottom: 32px;
-        }
-
+        .login-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        .login-subtitle { color: var(--text-2); font-size: 0.875rem; margin-bottom: 32px; }
         .form-group { margin-bottom: 20px; }
 
         .form-group label {
@@ -243,6 +212,7 @@
 
         .form-control::placeholder { color: var(--text-3); }
         .form-control.is-invalid { border-color: var(--error); }
+        .form-control:read-only { opacity: 0.6; cursor: not-allowed; }
         .invalid-feedback { color: var(--error); font-size: 0.8rem; margin-top: 4px; }
 
         .btn-submit {
@@ -302,15 +272,15 @@
         <div class="left-content">
             <div class="left-brand">⚡</div>
             <h1 class="left-title">{{ config('app.name', 'ZephyrPHP') }}</h1>
-            <p class="left-desc">Visual page builder, theme customizer, and AI content tools — all from one admin panel.</p>
+            <p class="left-desc">You have been invited to join. Create your account to get started.</p>
         </div>
     </div>
 
-    <!-- Right — Login Form -->
+    <!-- Right — Accept Invitation Form -->
     <main class="login-right">
         <div class="login-form-wrap">
-            <h2 class="login-title">Welcome back</h2>
-            <p class="login-subtitle">Sign in to continue</p>
+            <h2 class="login-title">Create your account</h2>
+            <p class="login-subtitle">Complete your invitation</p>
 
             {% if flash('error') %}
                 <div class="alert alert--error">{{ flash('error') }}</div>
@@ -319,34 +289,54 @@
                 <div class="alert alert--success">{{ flash('success') }}</div>
             {% endif %}
 
-            <form method="POST" action="/zephyrphp/auth/login">
+            <form method="POST" action="/zephyrphp/auth/invite/accept">
                 {{ csrf_field() | raw }}
+                <input type="hidden" name="token" value="{{ token }}">
+                <input type="hidden" name="email" value="{{ email }}">
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name"
+                           class="form-control{% if flash('errors').name is defined %} is-invalid{% endif %}"
+                           value="{{ flash('_old_input').name ?? '' }}"
+                           placeholder="Your full name" required autofocus>
+                    {% if flash('errors').name is defined %}
+                        <div class="invalid-feedback">{{ flash('errors').name }}</div>
+                    {% endif %}
+                </div>
 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email"
-                           class="form-control{% if flash('errors').email is defined %} is-invalid{% endif %}"
-                           value="{{ flash('_old_input').email ?? '' }}"
-                           placeholder="you@example.com" required autofocus>
-                    {% if flash('errors').email is defined %}
-                        <div class="invalid-feedback">{{ flash('errors').email }}</div>
-                    {% endif %}
+                    <input type="email" id="email" name="email_display"
+                           class="form-control"
+                           value="{{ email }}"
+                           readonly>
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password"
                            class="form-control{% if flash('errors').password is defined %} is-invalid{% endif %}"
-                           placeholder="Enter your password" required>
+                           placeholder="At least 8 characters" required>
                     {% if flash('errors').password is defined %}
                         <div class="invalid-feedback">{{ flash('errors').password }}</div>
                     {% endif %}
                 </div>
 
-                <button type="submit" class="btn-submit">Sign In</button>
+                <div class="form-group">
+                    <label for="password_confirmation">Confirm Password</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation"
+                           class="form-control{% if flash('errors').password_confirmation is defined %} is-invalid{% endif %}"
+                           placeholder="Confirm your password" required>
+                    {% if flash('errors').password_confirmation is defined %}
+                        <div class="invalid-feedback">{{ flash('errors').password_confirmation }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-submit">Create Account</button>
             </form>
 
-            <a href="/zephyrphp/auth/forgot-password" style="display:block;text-align:center;margin-top:24px;font-size:0.8125rem;color:var(--text-2);text-decoration:none;transition:color 0.15s;">Forgot your password?</a>
+            <a href="/zephyrphp/auth/login" style="display:block;text-align:center;margin-top:24px;font-size:0.8125rem;color:var(--text-2);text-decoration:none;transition:color 0.15s;">Already have an account? Sign in</a>
 
             <p class="login-footer">&copy; {{ "now"|date("Y") }} {{ config('app.name', 'ZephyrPHP') }}</p>
         </div>

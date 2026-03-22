@@ -10,6 +10,8 @@ use ZephyrPHP\Router\Route;
 use ZephyrPHP\Middleware\AuthMiddleware;
 use ZephyrPHP\Middleware\GuestMiddleware;
 use App\Controllers\Auth\LoginController;
+use App\Controllers\Auth\PasswordResetController;
+use App\Controllers\Auth\InvitationController;
 use App\Setup\SetupController;
 
 // Setup wizard (only available when not installed)
@@ -25,3 +27,17 @@ if (!file_exists(BASE_PATH . '/storage/.installed')) {
 Route::get('/zephyrphp/auth/login', [LoginController::class, 'showLoginForm'], [GuestMiddleware::class]);
 Route::post('/zephyrphp/auth/login', [LoginController::class, 'login'], [GuestMiddleware::class]);
 Route::post('/zephyrphp/auth/logout', [LoginController::class, 'logout'], [AuthMiddleware::class]);
+
+// Two-Factor Authentication routes
+Route::get('/zephyrphp/auth/2fa', [LoginController::class, 'show2faChallenge']);
+Route::post('/zephyrphp/auth/2fa', [LoginController::class, 'verify2fa']);
+
+// Password reset routes
+Route::get('/zephyrphp/auth/forgot-password', [PasswordResetController::class, 'showForgotForm'], [GuestMiddleware::class]);
+Route::post('/zephyrphp/auth/forgot-password', [PasswordResetController::class, 'sendResetLink'], [GuestMiddleware::class]);
+Route::get('/zephyrphp/auth/reset-password', [PasswordResetController::class, 'showResetForm'], [GuestMiddleware::class]);
+Route::post('/zephyrphp/auth/reset-password', [PasswordResetController::class, 'resetPassword'], [GuestMiddleware::class]);
+
+// Invitation acceptance routes
+Route::get('/zephyrphp/auth/invite/accept', [InvitationController::class, 'showAcceptForm'], [GuestMiddleware::class]);
+Route::post('/zephyrphp/auth/invite/accept', [InvitationController::class, 'accept'], [GuestMiddleware::class]);
