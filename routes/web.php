@@ -28,10 +28,6 @@ Route::get('/zephyrphp/auth/login', [LoginController::class, 'showLoginForm'], [
 Route::post('/zephyrphp/auth/login', [LoginController::class, 'login'], [GuestMiddleware::class]);
 Route::post('/zephyrphp/auth/logout', [LoginController::class, 'logout'], [AuthMiddleware::class]);
 
-// Two-Factor Authentication routes
-Route::get('/zephyrphp/auth/2fa', [LoginController::class, 'show2faChallenge']);
-Route::post('/zephyrphp/auth/2fa', [LoginController::class, 'verify2fa']);
-
 // Password reset routes
 Route::get('/zephyrphp/auth/forgot-password', [PasswordResetController::class, 'showForgotForm'], [GuestMiddleware::class]);
 Route::post('/zephyrphp/auth/forgot-password', [PasswordResetController::class, 'sendResetLink'], [GuestMiddleware::class]);
