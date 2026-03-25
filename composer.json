@@ -35,7 +35,7 @@
         "zephyrphp/database": "^0.4",
         "zephyrphp/auth": "^0.4",
         "zephyrphp/authorization": "^0.4",
-        "zephyrphp/cms": "^0.6"
+        "zephyrphp/cms": "^0.7"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
