@@ -268,6 +268,9 @@ class SetupController extends Controller
                 `email` VARCHAR(180) NOT NULL,
                 `password` VARCHAR(255) NOT NULL,
                 `rememberToken` VARCHAR(100) NULL DEFAULT NULL,
+                `twoFactorSecret` VARCHAR(255) NULL DEFAULT NULL,
+                `twoFactorEnabled` TINYINT(1) NOT NULL DEFAULT 0,
+                `twoFactorRecoveryCodes` TEXT NULL DEFAULT NULL,
                 `createdAt` DATETIME NULL DEFAULT NULL,
                 `updatedAt` DATETIME NULL DEFAULT NULL,
                 UNIQUE KEY `uniq_email` (`email`)
