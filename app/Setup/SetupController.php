@@ -316,7 +316,6 @@ class SetupController extends Controller
                 `slug` VARCHAR(100) NOT NULL,
                 `description` TEXT NULL DEFAULT NULL,
                 `icon` VARCHAR(50) NULL DEFAULT NULL,
-                `is_api_enabled` TINYINT(1) NOT NULL DEFAULT 0,
                 `is_publishable` TINYINT(1) NOT NULL DEFAULT 0,
                 `primary_key_type` VARCHAR(10) NOT NULL DEFAULT 'integer',
                 `has_slug` TINYINT(1) NOT NULL DEFAULT 0,
@@ -327,7 +326,6 @@ class SetupController extends Controller
                 `url_prefix` VARCHAR(100) NULL DEFAULT NULL,
                 `items_per_page` INT NOT NULL DEFAULT 20,
                 `permissions` JSON NULL DEFAULT NULL,
-                `api_rate_limit` INT NOT NULL DEFAULT 60,
                 `seo_enabled` TINYINT(1) NOT NULL DEFAULT 0,
                 `is_translatable` TINYINT(1) NOT NULL DEFAULT 0,
                 `workflow_enabled` TINYINT(1) NOT NULL DEFAULT 0,
@@ -420,52 +418,6 @@ class SetupController extends Controller
             ");
             $results[] = ['table' => 'cms_role_permissions', 'status' => 'ready'];
 
-            $this->createTable($pdo, 'cms_oauth_clients', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `name` VARCHAR(255) NOT NULL,
-                `client_id` VARCHAR(64) NOT NULL,
-                `client_secret` VARCHAR(128) NOT NULL,
-                `redirect_uri` VARCHAR(2048) NOT NULL,
-                `scopes` JSON NULL DEFAULT NULL,
-                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                UNIQUE KEY `uniq_client_id` (`client_id`)
-            ");
-            $results[] = ['table' => 'cms_oauth_clients', 'status' => 'ready'];
-
-            $this->createTable($pdo, 'cms_oauth_auth_codes', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `code` VARCHAR(128) NOT NULL,
-                `client_id` VARCHAR(64) NOT NULL,
-                `user_id` INT NOT NULL,
-                `scopes` JSON NULL DEFAULT NULL,
-                `redirect_uri` VARCHAR(2048) NOT NULL,
-                `code_challenge` VARCHAR(128) NULL DEFAULT NULL,
-                `code_challenge_method` VARCHAR(10) NULL DEFAULT NULL,
-                `expires_at` DATETIME NOT NULL,
-                `used` TINYINT(1) NOT NULL DEFAULT 0,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                INDEX `idx_auth_code` (`code`),
-                INDEX `idx_auth_expires` (`expires_at`)
-            ");
-            $results[] = ['table' => 'cms_oauth_auth_codes', 'status' => 'ready'];
-
-            $this->createTable($pdo, 'cms_oauth_tokens', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `token` VARCHAR(128) NOT NULL,
-                `type` VARCHAR(10) NOT NULL DEFAULT 'access',
-                `user_id` INT NOT NULL,
-                `client_id` VARCHAR(64) NOT NULL,
-                `scopes` JSON NULL DEFAULT NULL,
-                `expires_at` DATETIME NOT NULL,
-                `revoked` TINYINT(1) NOT NULL DEFAULT 0,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                INDEX `idx_token` (`token`),
-                INDEX `idx_token_type` (`type`, `revoked`),
-                INDEX `idx_token_client` (`client_id`)
-            ");
-            $results[] = ['table' => 'cms_oauth_tokens', 'status' => 'ready'];
-
             $this->createTable($pdo, 'cms_webhooks', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `topic` VARCHAR(100) NOT NULL,
@@ -482,66 +434,6 @@ class SetupController extends Controller
                 INDEX `idx_webhook_client` (`client_id`)
             ");
             $results[] = ['table' => 'cms_webhooks', 'status' => 'ready'];
-
-            $this->createTable($pdo, 'cms_marketplace_items', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `slug` VARCHAR(100) NOT NULL,
-                `name` VARCHAR(255) NOT NULL,
-                `type` VARCHAR(20) NOT NULL DEFAULT 'theme',
-                `category` VARCHAR(100) NULL DEFAULT NULL,
-                `description` TEXT NULL DEFAULT NULL,
-                `version` VARCHAR(20) NOT NULL DEFAULT '1.0.0',
-                `seller_id` INT UNSIGNED NOT NULL,
-                `seller_name` VARCHAR(255) NOT NULL,
-                `pricing` VARCHAR(20) NOT NULL DEFAULT 'free',
-                `price_in_cents` INT UNSIGNED NOT NULL DEFAULT 0,
-                `currency` VARCHAR(3) NOT NULL DEFAULT 'USD',
-                `status` VARCHAR(20) NOT NULL DEFAULT 'pending',
-                `package_path` VARCHAR(500) NULL DEFAULT NULL,
-                `preview_image` VARCHAR(500) NULL DEFAULT NULL,
-                `screenshots` JSON NULL DEFAULT NULL,
-                `downloads` INT UNSIGNED NOT NULL DEFAULT 0,
-                `avg_rating` DECIMAL(3,2) NOT NULL DEFAULT 0.00,
-                `review_count` INT UNSIGNED NOT NULL DEFAULT 0,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                `updatedAt` DATETIME NULL DEFAULT NULL,
-                UNIQUE KEY `uniq_mp_slug` (`slug`),
-                INDEX `idx_mp_type` (`type`),
-                INDEX `idx_mp_status` (`status`),
-                INDEX `idx_mp_seller` (`seller_id`),
-                INDEX `idx_mp_pricing` (`pricing`)
-            ");
-            $results[] = ['table' => 'cms_marketplace_items', 'status' => 'ready'];
-
-            $this->createTable($pdo, 'cms_marketplace_reviews', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `item_id` INT UNSIGNED NOT NULL,
-                `user_id` INT UNSIGNED NOT NULL,
-                `user_name` VARCHAR(255) NOT NULL,
-                `rating` TINYINT UNSIGNED NOT NULL,
-                `body` TEXT NULL DEFAULT NULL,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                INDEX `idx_review_item` (`item_id`),
-                UNIQUE KEY `uniq_review_user_item` (`item_id`, `user_id`),
-                CONSTRAINT `fk_review_item` FOREIGN KEY (`item_id`) REFERENCES `cms_marketplace_items`(`id`) ON DELETE CASCADE
-            ");
-            $results[] = ['table' => 'cms_marketplace_reviews', 'status' => 'ready'];
-
-            $this->createTable($pdo, 'cms_marketplace_licenses', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `item_id` INT UNSIGNED NOT NULL,
-                `buyer_id` INT UNSIGNED NOT NULL,
-                `license_key` VARCHAR(128) NOT NULL,
-                `site_url` VARCHAR(2048) NULL DEFAULT NULL,
-                `status` VARCHAR(20) NOT NULL DEFAULT 'active',
-                `expires_at` DATETIME NULL DEFAULT NULL,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                UNIQUE KEY `uniq_license_key` (`license_key`),
-                INDEX `idx_license_item` (`item_id`),
-                INDEX `idx_license_buyer` (`buyer_id`),
-                CONSTRAINT `fk_license_item` FOREIGN KEY (`item_id`) REFERENCES `cms_marketplace_items`(`id`) ON DELETE CASCADE
-            ");
-            $results[] = ['table' => 'cms_marketplace_licenses', 'status' => 'ready'];
 
             $this->createTable($pdo, 'cms_activity_log', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -647,34 +539,6 @@ class SetupController extends Controller
             ");
             $results[] = ['table' => 'cms_translations', 'status' => 'ready'];
 
-            $this->createTable($pdo, 'cms_email_templates', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `slug` VARCHAR(100) NOT NULL,
-                `name` VARCHAR(255) NOT NULL,
-                `subject` VARCHAR(255) NOT NULL,
-                `body_twig` TEXT NOT NULL,
-                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                `updatedAt` DATETIME NULL DEFAULT NULL,
-                UNIQUE KEY `uniq_email_tpl_slug` (`slug`)
-            ");
-            $results[] = ['table' => 'cms_email_templates', 'status' => 'ready'];
-
-            $this->createTable($pdo, 'cms_automation_rules', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `name` VARCHAR(255) NOT NULL,
-                `collection_slug` VARCHAR(255) NOT NULL,
-                `trigger_type` VARCHAR(50) NOT NULL DEFAULT 'schedule',
-                `conditions` TEXT NULL DEFAULT NULL,
-                `actions` TEXT NULL DEFAULT NULL,
-                `schedule` VARCHAR(100) NULL DEFAULT NULL,
-                `last_run_at` DATETIME NULL DEFAULT NULL,
-                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                `updatedAt` DATETIME NULL DEFAULT NULL
-            ");
-            $results[] = ['table' => 'cms_automation_rules', 'status' => 'ready'];
-
             $this->createTable($pdo, 'cms_redirects', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 `from_path` VARCHAR(2048) NOT NULL,
@@ -739,20 +603,6 @@ class SetupController extends Controller
                 INDEX `idx_wft_created` (`createdAt`)
             ");
             $results[] = ['table' => 'cms_workflow_transitions', 'status' => 'ready'];
-
-            $this->createTable($pdo, 'cms_ai_history', "
-                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `user_id` INT UNSIGNED NOT NULL,
-                `prompt` TEXT NOT NULL,
-                `mode` VARCHAR(20) NOT NULL DEFAULT 'page',
-                `provider` VARCHAR(50) NOT NULL,
-                `result_summary` VARCHAR(255) NULL DEFAULT NULL,
-                `tokens_used` INT UNSIGNED NOT NULL DEFAULT 0,
-                `createdAt` DATETIME NULL DEFAULT NULL,
-                INDEX `idx_ai_user` (`user_id`),
-                INDEX `idx_ai_created` (`createdAt`)
-            ");
-            $results[] = ['table' => 'cms_ai_history', 'status' => 'ready'];
 
             $this->createTable($pdo, 'cms_invitations', "
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
