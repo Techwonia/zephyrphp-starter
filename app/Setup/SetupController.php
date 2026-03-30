@@ -667,7 +667,8 @@ class SetupController extends Controller
     {
         $driver = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
         $engine = ($driver === 'mysql') ? ' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci' : '';
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `$name` ($columns)$engine");
+        $quoted = $this->quoteIdentifier($pdo, $name);
+        $pdo->exec("CREATE TABLE IF NOT EXISTS {$quoted} ($columns){$engine}");
     }
 
     private function quoteIdentifier(\PDO $pdo, string $identifier): string
