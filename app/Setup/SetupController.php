@@ -902,6 +902,10 @@ class SetupController extends Controller
             session_regenerate_id(true);
             $_SESSION['auth_user_id'] = (int) $userId;
 
+            // ── Security: permanently delete setup files ──
+            // Prevents re-running setup if .installed is ever deleted
+            $this->destroySetupFiles();
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Setup complete!',
@@ -912,6 +916,47 @@ class SetupController extends Controller
             echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
         }
         exit;
+    }
+
+    // ─── Setup Self-Destruct ────────────────────────────────
+
+    /**
+     * Permanently delete all setup wizard files after successful installation.
+     * This prevents the setup wizard from ever being accessible again,
+     * even if the .installed file is deleted by an attacker.
+     */
+    private function destroySetupFiles(): void
+    {
+        $basePath = defined('BASE_PATH') ? BASE_PATH : getcwd();
+
+        $filesToDelete = [
+            $basePath . '/app/Setup/SetupController.php',
+            $basePath . '/pages/setup/wizard.twig',
+        ];
+
+        $dirsToDelete = [
+            $basePath . '/pages/setup',
+            $basePath . '/app/Setup',
+        ];
+
+        // Delete files first
+        foreach ($filesToDelete as $file) {
+            if (file_exists($file)) {
+                @unlink($file);
+            }
+        }
+
+        // Delete empty directories
+        foreach ($dirsToDelete as $dir) {
+            if (is_dir($dir)) {
+                // Only delete if directory is empty (or only has dotfiles)
+                $remaining = @scandir($dir);
+                $remaining = array_diff($remaining ?: [], ['.', '..']);
+                if (empty($remaining)) {
+                    @rmdir($dir);
+                }
+            }
+        }
     }
 
     // ─── Security Helpers ────────────────────────────────────

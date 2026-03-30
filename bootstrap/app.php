@@ -22,9 +22,10 @@
 */
 
 $installedFile = BASE_PATH . '/storage/.installed';
-if (!file_exists($installedFile)) {
+$setupController = BASE_PATH . '/app/Setup/SetupController.php';
+if (!file_exists($installedFile) && file_exists($setupController)) {
+    // Not installed AND setup files exist — redirect to wizard
     $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    // Allow setup routes, static assets, and favicon through
     if (!str_starts_with($uri, '/setup') && !str_starts_with($uri, '/assets') && $uri !== '/favicon.ico') {
         header('Location: /setup');
         exit;
