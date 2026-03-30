@@ -433,11 +433,6 @@
                     <span class="step-dot">3</span>
                     Admin Account
                 </li>
-                <div class="step-connector" data-conn="3"></div>
-                <li class="sidebar-step" data-sidebar="4">
-                    <span class="step-dot">4</span>
-                    Complete
-                </li>
             </ul>
         </div>
         <div class="sidebar-footer">
@@ -587,24 +582,9 @@
                         Back
                     </button>
                     <button class="btn btn-primary" id="btn-create-admin">
-                        Create Account
+                        Create Account & Launch CMS
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
-                </div>
-            </div>
-
-            <!-- Step 4: Complete -->
-            <div class="step-content" data-step="4">
-                <div class="success-content">
-                    <div class="success-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <h2>You're all set!</h2>
-                    <p>Your ZephyrPHP site is ready. Start building from the CMS dashboard.</p>
-                    <div class="success-actions">
-                        <a href="/" class="btn btn-secondary">Visit Site</a>
-                        <a href="/admin" class="btn btn-primary">Open CMS Dashboard</a>
-                    </div>
                 </div>
             </div>
 
@@ -614,7 +594,7 @@
 
 <script nonce="{{ csp_nonce() }}">
     let currentStep = 1;
-    const totalSteps = 4;
+    const totalSteps = 3;
 
     function setProgress(step) {
         const pct = Math.round(((step - 1) / (totalSteps - 1)) * 100);
@@ -749,8 +729,13 @@
             const result = await apiCall('/setup/setup-database', getDbData());
 
             if (result.success) {
-                btnLoading(btn, false);
-                goToStep(3);
+                // Show table creation progress
+                const tableCount = result.tables ? result.tables.length : 0;
+                showAlert(2, 'success', `Database configured — ${tableCount} tables created`);
+                setTimeout(() => {
+                    btnLoading(btn, false);
+                    goToStep(3);
+                }, 800);
             } else if (result.has_tables) {
                 btnLoading(btn, false);
                 showAlert(2, 'error', result.error);
@@ -763,10 +748,18 @@
                         const dbData = getDbData();
                         dbData.confirm_existing = true;
                         const r = await apiCall('/setup/setup-database', dbData);
-                        btnLoading(btn, false);
                         btn.onclick = saveStep2;
-                        if (r.success) { goToStep(3); }
-                        else { showAlert(2, 'error', r.error); }
+                        if (r.success) {
+                            const tableCount = r.tables ? r.tables.length : 0;
+                            showAlert(2, 'success', `Database configured — ${tableCount} tables created`);
+                            setTimeout(() => {
+                                btnLoading(btn, false);
+                                goToStep(3);
+                            }, 800);
+                        } else {
+                            btnLoading(btn, false);
+                            showAlert(2, 'error', r.error);
+                        }
                     } catch (e) {
                         btnLoading(btn, false);
                         btn.onclick = saveStep2;
@@ -794,6 +787,7 @@
 
         const btn = document.getElementById('btn-create-admin');
         btnLoading(btn, true);
+        btn.innerHTML = '<span class="spinner"></span> Setting up...';
 
         try {
             const result = await apiCall('/setup/create-admin', {
@@ -803,11 +797,15 @@
                 password_confirmation: confirm,
             });
 
-            if (result.success) {
-                const completeResult = await apiCall('/setup/complete', {});
+            if (result.success && result.redirect) {
+                // Success — redirect to admin dashboard (already logged in)
+                showAlert(3, 'success', 'Account created! Redirecting to dashboard...');
+                setTimeout(() => {
+                    window.location.href = result.redirect;
+                }, 1000);
+            } else if (result.success) {
                 btnLoading(btn, false);
-                if (completeResult.success) { goToStep(4); }
-                else { showAlert(3, 'error', completeResult.error || 'Failed to finalize.'); }
+                window.location.href = '/admin';
             } else {
                 btnLoading(btn, false);
                 showAlert(3, 'error', result.error);

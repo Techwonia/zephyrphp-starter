@@ -380,7 +380,411 @@ class SetupController extends Controller
             ");
             $results[] = ['table' => 'cms_media', 'status' => 'ready'];
 
-            // ── Step 5: Seed theme if none exist ──
+            // ── CMS Tables ──
+
+            $this->createTable($pdo, 'cms_api_keys', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(255) NOT NULL,
+                `key` VARCHAR(64) NOT NULL,
+                `permissions` JSON NULL DEFAULT NULL,
+                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+                `expires_at` DATETIME NULL DEFAULT NULL,
+                `last_used_at` DATETIME NULL DEFAULT NULL,
+                `created_by` INT NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_api_key` (`key`)
+            ");
+            $results[] = ['table' => 'cms_api_keys', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_revisions', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `table_name` VARCHAR(255) NOT NULL,
+                `entry_id` VARCHAR(50) NOT NULL,
+                `data` JSON NOT NULL,
+                `changed_fields` JSON NULL DEFAULT NULL,
+                `action` VARCHAR(20) NOT NULL DEFAULT 'update',
+                `user_id` INT NULL DEFAULT NULL,
+                `user_name` VARCHAR(255) NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_rev_table_entry` (`table_name`, `entry_id`)
+            ");
+            $results[] = ['table' => 'cms_revisions', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_role_permissions', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `role_slug` VARCHAR(100) NOT NULL,
+                `permissions` JSON NOT NULL,
+                UNIQUE KEY `uniq_role_slug` (`role_slug`)
+            ");
+            $results[] = ['table' => 'cms_role_permissions', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_oauth_clients', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(255) NOT NULL,
+                `client_id` VARCHAR(64) NOT NULL,
+                `client_secret` VARCHAR(128) NOT NULL,
+                `redirect_uri` VARCHAR(2048) NOT NULL,
+                `scopes` JSON NULL DEFAULT NULL,
+                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_client_id` (`client_id`)
+            ");
+            $results[] = ['table' => 'cms_oauth_clients', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_oauth_auth_codes', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `code` VARCHAR(128) NOT NULL,
+                `client_id` VARCHAR(64) NOT NULL,
+                `user_id` INT NOT NULL,
+                `scopes` JSON NULL DEFAULT NULL,
+                `redirect_uri` VARCHAR(2048) NOT NULL,
+                `code_challenge` VARCHAR(128) NULL DEFAULT NULL,
+                `code_challenge_method` VARCHAR(10) NULL DEFAULT NULL,
+                `expires_at` DATETIME NOT NULL,
+                `used` TINYINT(1) NOT NULL DEFAULT 0,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_auth_code` (`code`),
+                INDEX `idx_auth_expires` (`expires_at`)
+            ");
+            $results[] = ['table' => 'cms_oauth_auth_codes', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_oauth_tokens', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `token` VARCHAR(128) NOT NULL,
+                `type` VARCHAR(10) NOT NULL DEFAULT 'access',
+                `user_id` INT NOT NULL,
+                `client_id` VARCHAR(64) NOT NULL,
+                `scopes` JSON NULL DEFAULT NULL,
+                `expires_at` DATETIME NOT NULL,
+                `revoked` TINYINT(1) NOT NULL DEFAULT 0,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_token` (`token`),
+                INDEX `idx_token_type` (`type`, `revoked`),
+                INDEX `idx_token_client` (`client_id`)
+            ");
+            $results[] = ['table' => 'cms_oauth_tokens', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_webhooks', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `topic` VARCHAR(100) NOT NULL,
+                `url` VARCHAR(2048) NOT NULL,
+                `client_id` VARCHAR(64) NOT NULL,
+                `secret` VARCHAR(128) NOT NULL,
+                `format` VARCHAR(10) NOT NULL DEFAULT 'json',
+                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+                `failure_count` INT NOT NULL DEFAULT 0,
+                `last_error` TEXT NULL DEFAULT NULL,
+                `last_success_at` DATETIME NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_webhook_topic` (`topic`, `is_active`),
+                INDEX `idx_webhook_client` (`client_id`)
+            ");
+            $results[] = ['table' => 'cms_webhooks', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_marketplace_items', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `slug` VARCHAR(100) NOT NULL,
+                `name` VARCHAR(255) NOT NULL,
+                `type` VARCHAR(20) NOT NULL DEFAULT 'theme',
+                `category` VARCHAR(100) NULL DEFAULT NULL,
+                `description` TEXT NULL DEFAULT NULL,
+                `version` VARCHAR(20) NOT NULL DEFAULT '1.0.0',
+                `seller_id` INT UNSIGNED NOT NULL,
+                `seller_name` VARCHAR(255) NOT NULL,
+                `pricing` VARCHAR(20) NOT NULL DEFAULT 'free',
+                `price_in_cents` INT UNSIGNED NOT NULL DEFAULT 0,
+                `currency` VARCHAR(3) NOT NULL DEFAULT 'USD',
+                `status` VARCHAR(20) NOT NULL DEFAULT 'pending',
+                `package_path` VARCHAR(500) NULL DEFAULT NULL,
+                `preview_image` VARCHAR(500) NULL DEFAULT NULL,
+                `screenshots` JSON NULL DEFAULT NULL,
+                `downloads` INT UNSIGNED NOT NULL DEFAULT 0,
+                `avg_rating` DECIMAL(3,2) NOT NULL DEFAULT 0.00,
+                `review_count` INT UNSIGNED NOT NULL DEFAULT 0,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_mp_slug` (`slug`),
+                INDEX `idx_mp_type` (`type`),
+                INDEX `idx_mp_status` (`status`),
+                INDEX `idx_mp_seller` (`seller_id`),
+                INDEX `idx_mp_pricing` (`pricing`)
+            ");
+            $results[] = ['table' => 'cms_marketplace_items', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_marketplace_reviews', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `item_id` INT UNSIGNED NOT NULL,
+                `user_id` INT UNSIGNED NOT NULL,
+                `user_name` VARCHAR(255) NOT NULL,
+                `rating` TINYINT UNSIGNED NOT NULL,
+                `body` TEXT NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_review_item` (`item_id`),
+                UNIQUE KEY `uniq_review_user_item` (`item_id`, `user_id`),
+                CONSTRAINT `fk_review_item` FOREIGN KEY (`item_id`) REFERENCES `cms_marketplace_items`(`id`) ON DELETE CASCADE
+            ");
+            $results[] = ['table' => 'cms_marketplace_reviews', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_marketplace_licenses', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `item_id` INT UNSIGNED NOT NULL,
+                `buyer_id` INT UNSIGNED NOT NULL,
+                `license_key` VARCHAR(128) NOT NULL,
+                `site_url` VARCHAR(2048) NULL DEFAULT NULL,
+                `status` VARCHAR(20) NOT NULL DEFAULT 'active',
+                `expires_at` DATETIME NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_license_key` (`license_key`),
+                INDEX `idx_license_item` (`item_id`),
+                INDEX `idx_license_buyer` (`buyer_id`),
+                CONSTRAINT `fk_license_item` FOREIGN KEY (`item_id`) REFERENCES `cms_marketplace_items`(`id`) ON DELETE CASCADE
+            ");
+            $results[] = ['table' => 'cms_marketplace_licenses', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_activity_log', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `action` VARCHAR(50) NOT NULL,
+                `resource_type` VARCHAR(50) NOT NULL,
+                `resource_id` VARCHAR(100) NULL DEFAULT NULL,
+                `resource_label` VARCHAR(255) NULL DEFAULT NULL,
+                `user_id` INT NULL DEFAULT NULL,
+                `user_name` VARCHAR(255) NULL DEFAULT NULL,
+                `ip_address` VARCHAR(45) NULL DEFAULT NULL,
+                `meta` JSON NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_al_action` (`action`),
+                INDEX `idx_al_resource` (`resource_type`, `resource_id`),
+                INDEX `idx_al_user` (`user_id`),
+                INDEX `idx_al_created` (`createdAt`)
+            ");
+            $results[] = ['table' => 'cms_activity_log', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_saved_views', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `collection_slug` VARCHAR(100) NOT NULL,
+                `name` VARCHAR(255) NOT NULL,
+                `slug` VARCHAR(100) NOT NULL,
+                `filters` JSON NOT NULL,
+                `sort_by` VARCHAR(100) NULL DEFAULT NULL,
+                `sort_dir` VARCHAR(4) NOT NULL DEFAULT 'DESC',
+                `is_default` TINYINT(1) NOT NULL DEFAULT 0,
+                `created_by` INT NULL DEFAULT NULL,
+                `sort_order` INT NOT NULL DEFAULT 0,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_sv_collection` (`collection_slug`),
+                UNIQUE KEY `uniq_sv_slug` (`collection_slug`, `slug`)
+            ");
+            $results[] = ['table' => 'cms_saved_views', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_content_templates', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(255) NOT NULL,
+                `collection_slug` VARCHAR(255) NOT NULL,
+                `data` JSON NULL DEFAULT NULL,
+                `created_by` INT NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_ct_collection` (`collection_slug`)
+            ");
+            $results[] = ['table' => 'cms_content_templates', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_notifications', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `user_id` INT UNSIGNED NOT NULL,
+                `type` VARCHAR(50) NOT NULL,
+                `title` VARCHAR(255) NOT NULL,
+                `body` TEXT NULL DEFAULT NULL,
+                `link` VARCHAR(500) NULL DEFAULT NULL,
+                `is_read` TINYINT(1) NOT NULL DEFAULT 0,
+                `meta` JSON NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_notif_user_read` (`user_id`, `is_read`),
+                INDEX `idx_notif_created` (`createdAt`)
+            ");
+            $results[] = ['table' => 'cms_notifications', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_notification_preferences', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `user_id` INT UNSIGNED NOT NULL,
+                `preferences` JSON NOT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_notif_pref_user` (`user_id`)
+            ");
+            $results[] = ['table' => 'cms_notification_preferences', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_languages', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `code` VARCHAR(10) NOT NULL,
+                `name` VARCHAR(100) NOT NULL,
+                `native_name` VARCHAR(100) NOT NULL,
+                `is_default` TINYINT(1) NOT NULL DEFAULT 0,
+                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+                `sort_order` INT NOT NULL DEFAULT 0,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_lang_code` (`code`)
+            ");
+            $results[] = ['table' => 'cms_languages', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_translations', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `table_name` VARCHAR(255) NOT NULL,
+                `entry_id` VARCHAR(50) NOT NULL,
+                `locale` VARCHAR(10) NOT NULL,
+                `field_slug` VARCHAR(100) NOT NULL,
+                `value` TEXT NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_translation` (`table_name`, `entry_id`, `locale`, `field_slug`),
+                INDEX `idx_trans_entry` (`table_name`, `entry_id`),
+                INDEX `idx_trans_locale` (`locale`)
+            ");
+            $results[] = ['table' => 'cms_translations', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_email_templates', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `slug` VARCHAR(100) NOT NULL,
+                `name` VARCHAR(255) NOT NULL,
+                `subject` VARCHAR(255) NOT NULL,
+                `body_twig` TEXT NOT NULL,
+                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_email_tpl_slug` (`slug`)
+            ");
+            $results[] = ['table' => 'cms_email_templates', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_automation_rules', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(255) NOT NULL,
+                `collection_slug` VARCHAR(255) NOT NULL,
+                `trigger_type` VARCHAR(50) NOT NULL DEFAULT 'schedule',
+                `conditions` TEXT NULL DEFAULT NULL,
+                `actions` TEXT NULL DEFAULT NULL,
+                `schedule` VARCHAR(100) NULL DEFAULT NULL,
+                `last_run_at` DATETIME NULL DEFAULT NULL,
+                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL
+            ");
+            $results[] = ['table' => 'cms_automation_rules', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_redirects', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `from_path` VARCHAR(2048) NOT NULL,
+                `to_url` VARCHAR(2048) NOT NULL,
+                `status_code` INT NOT NULL DEFAULT 301,
+                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+                `hit_count` INT NOT NULL DEFAULT 0,
+                `last_hit_at` DATETIME NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL
+            ");
+            $results[] = ['table' => 'cms_redirects', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_sessions', "
+                `id` VARCHAR(128) NOT NULL PRIMARY KEY,
+                `user_id` INT UNSIGNED NULL DEFAULT NULL,
+                `ip_address` VARCHAR(45) NULL DEFAULT NULL,
+                `user_agent` TEXT NULL DEFAULT NULL,
+                `payload` TEXT NOT NULL,
+                `last_activity` INT NOT NULL,
+                INDEX `idx_sess_user` (`user_id`),
+                INDEX `idx_sess_activity` (`last_activity`)
+            ");
+            $results[] = ['table' => 'cms_sessions', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_plugins', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `slug` VARCHAR(100) NOT NULL,
+                `name` VARCHAR(255) NOT NULL,
+                `version` VARCHAR(20) NOT NULL DEFAULT '1.0.0',
+                `is_active` TINYINT(1) NOT NULL DEFAULT 0,
+                `settings` JSON NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_plugin_slug` (`slug`)
+            ");
+            $results[] = ['table' => 'cms_plugins', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_dashboard_layouts', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `user_id` INT UNSIGNED NOT NULL,
+                `layout` JSON NOT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                UNIQUE KEY `uniq_user_layout` (`user_id`)
+            ");
+            $results[] = ['table' => 'cms_dashboard_layouts', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_workflow_transitions', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `table_name` VARCHAR(255) NOT NULL,
+                `entry_id` VARCHAR(50) NOT NULL,
+                `from_stage` VARCHAR(50) NOT NULL,
+                `to_stage` VARCHAR(50) NOT NULL,
+                `user_id` INT NULL DEFAULT NULL,
+                `user_name` VARCHAR(255) NULL DEFAULT NULL,
+                `comment` TEXT NULL DEFAULT NULL,
+                `action` VARCHAR(20) NOT NULL DEFAULT 'advance',
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_wft_entry` (`table_name`, `entry_id`),
+                INDEX `idx_wft_created` (`createdAt`)
+            ");
+            $results[] = ['table' => 'cms_workflow_transitions', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_ai_history', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `user_id` INT UNSIGNED NOT NULL,
+                `prompt` TEXT NOT NULL,
+                `mode` VARCHAR(20) NOT NULL DEFAULT 'page',
+                `provider` VARCHAR(50) NOT NULL,
+                `result_summary` VARCHAR(255) NULL DEFAULT NULL,
+                `tokens_used` INT UNSIGNED NOT NULL DEFAULT 0,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_ai_user` (`user_id`),
+                INDEX `idx_ai_created` (`createdAt`)
+            ");
+            $results[] = ['table' => 'cms_ai_history', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'cms_invitations', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `email` VARCHAR(255) NOT NULL,
+                `token` VARCHAR(255) NOT NULL,
+                `role_id` INT NULL DEFAULT NULL,
+                `invited_by` INT NULL DEFAULT NULL,
+                `expires_at` DATETIME NOT NULL,
+                `accepted_at` DATETIME NULL DEFAULT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                `updatedAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_inv_email` (`email`)
+            ");
+            $results[] = ['table' => 'cms_invitations', 'status' => 'ready'];
+
+            $this->createTable($pdo, 'password_resets', "
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `email` VARCHAR(255) NOT NULL,
+                `token` VARCHAR(255) NOT NULL,
+                `createdAt` DATETIME NULL DEFAULT NULL,
+                INDEX `idx_pr_email` (`email`)
+            ");
+            $results[] = ['table' => 'password_resets', 'status' => 'ready'];
+
+            // Write CMS tables-installed flag
+            $flagDir = BASE_PATH . '/storage/cms';
+            if (!is_dir($flagDir)) {
+                @mkdir($flagDir, 0755, true);
+            }
+            @file_put_contents($flagDir . '/.tables-installed', '2', LOCK_EX);
+
+            // ── Seed theme if none exist ──
             $stmt = $pdo->query("SELECT COUNT(*) FROM `cms_themes`");
             if ((int) $stmt->fetchColumn() === 0) {
                 $themesBase = BASE_PATH . '/' . ltrim(env('VIEWS_PATH', '/pages'), '/') . '/themes';
@@ -473,49 +877,38 @@ class SetupController extends Controller
             $stmt = $pdo->prepare("INSERT INTO `role_user` (`user_id`, `role_id`) VALUES (?, ?)");
             $stmt->execute([(int) $userId, (int) $roleId]);
 
-            echo json_encode(['success' => true, 'message' => 'Admin account created']);
-        } catch (\Throwable $e) {
-            http_response_code(200);
-            echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
-        }
-        exit;
-    }
-
-    /**
-     * Complete the setup (Step 5)
-     */
-    public function complete()
-    {
-        header('Content-Type: application/json');
-
-        if (!$this->validatePostRequest()) {
-            exit;
-        }
-
-        try {
-            // Generate APP_KEY if not set
+            // Auto-complete: generate APP_KEY, create .installed, create uploads dir
             $env = $this->readEnv();
             if (empty($env['APP_KEY'])) {
                 $key = 'base64:' . base64_encode(random_bytes(32));
                 $this->updateEnv(['APP_KEY' => $key]);
             }
 
-            // Create .installed lock file
             $installedFile = BASE_PATH . '/storage/.installed';
             file_put_contents($installedFile, json_encode([
                 'installed_at' => date('Y-m-d H:i:s'),
                 'version' => '1.0.0',
             ]));
 
-            // Create uploads directory
             $uploadsDir = BASE_PATH . '/public/uploads';
             if (!is_dir($uploadsDir)) {
                 mkdir($uploadsDir, 0755, true);
             }
 
-            echo json_encode(['success' => true, 'redirect' => '/admin']);
+            // Auto-login the admin user
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            session_regenerate_id(true);
+            $_SESSION['auth_user_id'] = (int) $userId;
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Setup complete!',
+                'redirect' => '/' . ltrim($_ENV['ADMIN_PATH'] ?? 'admin', '/'),
+            ]);
         } catch (\Throwable $e) {
-            http_response_code(500);
+            http_response_code(200);
             echo json_encode(['success' => false, 'error' => $this->safeErrorMessage($e)]);
         }
         exit;

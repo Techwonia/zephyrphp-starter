@@ -20,7 +20,6 @@ if (!file_exists(BASE_PATH . '/storage/.installed')) {
     Route::post('/setup/save-settings', [SetupController::class, 'saveSettings']);
     Route::post('/setup/setup-database', [SetupController::class, 'setupDatabase']);
     Route::post('/setup/create-admin', [SetupController::class, 'createAdmin']);
-    Route::post('/setup/complete', [SetupController::class, 'complete']);
 }
 
 // Auth routes
