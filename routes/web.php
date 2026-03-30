@@ -12,14 +12,12 @@ use ZephyrPHP\Middleware\GuestMiddleware;
 use App\Controllers\Auth\LoginController;
 use App\Controllers\Auth\PasswordResetController;
 use App\Controllers\Auth\InvitationController;
-use App\Setup\SetupController;
-
 // Setup wizard (only available when not installed)
-if (!file_exists(BASE_PATH . '/storage/.installed')) {
-    Route::get('/setup', [SetupController::class, 'index']);
-    Route::post('/setup/save-settings', [SetupController::class, 'saveSettings']);
-    Route::post('/setup/setup-database', [SetupController::class, 'setupDatabase']);
-    Route::post('/setup/create-admin', [SetupController::class, 'createAdmin']);
+if (!file_exists(BASE_PATH . '/storage/.installed') && class_exists(\App\Setup\SetupController::class)) {
+    Route::get('/setup', [\App\Setup\SetupController::class, 'index']);
+    Route::post('/setup/save-settings', [\App\Setup\SetupController::class, 'saveSettings']);
+    Route::post('/setup/setup-database', [\App\Setup\SetupController::class, 'setupDatabase']);
+    Route::post('/setup/create-admin', [\App\Setup\SetupController::class, 'createAdmin']);
 }
 
 // Auth routes

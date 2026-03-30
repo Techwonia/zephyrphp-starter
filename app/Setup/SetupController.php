@@ -735,10 +735,17 @@ class SetupController extends Controller
             }
 
             $installedFile = BASE_PATH . '/storage/.installed';
-            file_put_contents($installedFile, json_encode([
+            $storageDir = dirname($installedFile);
+            if (!is_dir($storageDir)) {
+                @mkdir($storageDir, 0755, true);
+            }
+            $written = @file_put_contents($installedFile, json_encode([
                 'installed_at' => date('Y-m-d H:i:s'),
                 'version' => '1.0.0',
-            ]));
+            ]), LOCK_EX);
+            if ($written === false) {
+                throw new \RuntimeException('Failed to create .installed file. Check storage/ directory permissions.');
+            }
 
             $uploadsDir = BASE_PATH . '/public/uploads';
             if (!is_dir($uploadsDir)) {
