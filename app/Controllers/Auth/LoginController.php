@@ -71,12 +71,7 @@ class LoginController extends Controller
             return;
         }
 
-        // Role-based default redirect
-        $user = Auth::user();
-        if ($user && method_exists($user, 'hasRole') && $user->hasRole('admin')) {
-            $this->redirect('/' . ltrim($_ENV['ADMIN_PATH'] ?? 'admin', '/'));
-        } else {
-            $this->redirect($_ENV['AUTH_HOME'] ?? '/');
-        }
+        // All authenticated users go to admin panel
+        $this->redirect('/' . ltrim($_ENV['ADMIN_PATH'] ?? 'admin', '/'));
     }
 }
