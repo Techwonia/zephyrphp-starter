@@ -3,22 +3,14 @@
 /**
  * Module Configuration
  *
- * Enable or disable framework modules. Core modules (session, validation, view)
- * are always available. Optional modules can be toggled here.
- *
- * Install modules via Composer:
- *   composer require zephyrphp/database
- *   composer require zephyrphp/auth
- *   composer require zephyrphp/authorization
- *   composer require zephyrphp/cache
+ * All installed modules are enabled by default. Set to false to disable.
+ * Core modules (session, validation, view) are always active.
  */
 
 return [
-    // Optional modules — set to true to enable
-    'database' => false,
-    'auth' => false,
-    'authorization' => false,
-    'cache' => false,
-    'mail' => false,
-    'queue' => false,
+    'database' => true,
+    'auth' => true,
+    'authorization' => true,
+    'cache' => true,
+    'cms' => true,
 ];
