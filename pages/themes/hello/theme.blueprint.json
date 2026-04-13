@@ -24,5 +24,16 @@
             "img-src": "'self' data:",
             "font-src": "'self'"
         }
-    }
+    },
+    "settings_schema": [
+        {
+            "name": "Colors",
+            "settings": [
+                {"type": "color", "id": "primary_color", "label": "Primary Color", "default": "#111111"},
+                {"type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff"},
+                {"type": "color", "id": "text_color", "label": "Text Color", "default": "#111111"},
+                {"type": "color", "id": "text_secondary_color", "label": "Muted Text", "default": "#666666"}
+            ]
+        }
+    ]
 }

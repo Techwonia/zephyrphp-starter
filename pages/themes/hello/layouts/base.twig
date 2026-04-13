@@ -27,7 +27,7 @@
     <div class="preview-banner">Preview: {{ preview_theme_slug }} &mdash; <a href="{{ admin_url('themes') }}">Back</a></div>
     {% endif %}
 
-    {% include "@theme/snippets/header.twig" %}
+    {% include "@theme/partials/header.twig" %}
 
     {% if flash('success') %}
         <div class="container"><div class="alert alert--success">{{ flash('success') }}</div></div>
@@ -48,7 +48,7 @@
         {% endblock %}
     </main>
 
-    {% include "@theme/snippets/footer.twig" %}
+    {% include "@theme/partials/footer.twig" %}
     {{ assets_footer()|raw }}
     {% block scripts %}{% endblock %}
 </body>
